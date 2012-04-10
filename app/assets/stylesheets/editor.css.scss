@@ -1,0 +1,41 @@
+body {
+  height: 100%;
+  background: #eee;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 300px;
+  background: #ddd;
+
+  box-shadow: 0 0 5px rgba(0,0,0,.5);
+}
+
+.main_view {
+  min-height: 800px;
+  margin: 0;
+  margin-left: 300px;
+}
+
+.page {
+  background: #fff;
+  border: 1px solid #ccc;
+  width: 900px;
+
+  margin: 50px auto;
+
+  position: relative;
+
+  canvas {
+    margin: 50px;
+  }
+
+  #layer {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+  }
+}
