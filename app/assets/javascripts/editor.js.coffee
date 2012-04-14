@@ -199,6 +199,7 @@ make_draggable = (element) ->
 
 make_editable = (element) ->
   element.state = "preview"
+  attachEvents(element)
   element.attr("contenteditable", "true")
 
   add_drag_handle element
@@ -217,11 +218,14 @@ make_editable = (element) ->
 
   element.click (event) ->
     if element.state == "preview"
+      toolbar = $('#floatingbar')
+      toolbar.css("display", "block")
       element.css("border", "1px dashed #ccc")
       element.state = "editing"
       setEvent = ->
         $(".page").one "click", ->
           element.state = "preview"
+          toolbar.css("display", "none")
           element.css("border", "none")
           element.css("padding", 5)
       setTimeout setEvent, 100
