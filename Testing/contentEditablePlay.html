@@ -17,14 +17,77 @@ content.focus()
 
 <body>
 	
-	<div id="floatingbar"><ul> 
-	<li><a href="#">Item name</a></li> 
-	<li><a href="#">Item name</a></li> 
-	<li><a href="#">Item name</a></li> 
-	<li><a href="#">Item name</a></li> 
-	</ul></div>
+	<script type="text/javascript">
+		var getSelected = function(){
+			var t = '';
+			if(window.getSelection){
+				t = window.getSelection();
+			}else if(document.getSelection){
+				t = document.getSelection();
+			}else if(document.selection){
+				t = document.selection.createRange().text;
+			}
+			return t;
+		}
+		
+		var getStyles = function(){
+			var node = window.getSelection().anchorNode.parentNode;
+			var styles = {bold:false, italic:false};
+			while($(node).attr('contenteditable') != true){
+				if ($(node).css('fontWeight') == 700){
+					styles.bold = true;
+				}
+				if ($(node).css('fontStyle') == 'italic'){
+					styles.italic = true;
+				}
+				node = node.parentNode;
+			}
+			return styles;
+
+		}
+    $( function(){
+			
+			$("#toolbar_bold").click(function(e){
+				var selected = getSelected();
+				if(selected == ""){
+					
+				} else {
+					document.execCommand('bold',false,null);
+				}
+				
+			});
+			$("#toolbar_italic").click(function(e){
+				var selected = getSelected();
+				if(selected == ""){
+					
+				} else {
+					document.execCommand('italic',false,null);
+				}
+				
+			});
+			
+			$(".content").click(function(e){
+				getStyles();
+				alert('here');
+			});
+		});
+</script>
+	
+	
+	<div class="clearfix" id="floatingbar"><ul> 
+	<li><button id="toolbar_bold" style="font-style:bold">B</button></li> 
+	<li><button id="toolbar_italic" style="font-style:italic">I</button></li> 
+	<li><button id="toolbar_alignment"> Alignment </button></li>
+	<li><a href="#">Item name</a></li>
+	</ul>
+	<div style="clear:both"></div></div>
+	<br />
+	<br />
+	<br />
 
 	<div class="content" contenteditable="true"> edit this text </div>
+	
+	
 
 </body>
 
