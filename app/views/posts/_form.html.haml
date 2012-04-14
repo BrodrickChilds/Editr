@@ -1,10 +1,14 @@
 %div.sidebar
   %button#add_rectangle Add Item
+  %button#add_header Add Header
+  %button#add_section_title Add Section Title
+  %button#add_text_section Add Text Section
 
 %div.main_view
   .page
-    %canvas#grid{:width => "800", :height => "300"}
-    #layer
+    %canvas#grid{:width => 720, :height => 400}
+    %canvas#borders{:width => 720, :height => 400}
+    #page_content
 
 = form_for @post do |f|
   -if @post.errors.any?
