@@ -32,23 +32,25 @@ body {
   position: relative;
 
   h1 {
-    margin: 35px 0;
+    margin: 15px 0;
     font-size: 2em;
     padding: 5px;
     z-index: 10;
+    font-weight: bold;
     position: relative;
   }
 
   h2 {
-    margin: 35px 0;
-    font-size: 1.5em;
+    margin: 12px 0;
+    font-size: 1.2em;
     padding: 5px;
     z-index: 10;
+    font-weight: bold;
     position: relative;
   }
 
   .text_section {
-    margin: 10px 0;
+    margin: 8px 0;
     padding: 5px;
     z-index: 10;
     position: relative;

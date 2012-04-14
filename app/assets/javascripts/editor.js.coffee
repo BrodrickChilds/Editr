@@ -43,7 +43,8 @@ add_close_button = (element) ->
     color: "white"
     zIndex: 100
     padding: "3px 5px"
-    fontSize: ".7em"
+    fontSize: "10px"
+    fontWeight: "bold"
     fontFamily: "sans-serif"
     cursor: "pointer"
   button.text "X"
@@ -53,6 +54,39 @@ add_close_button = (element) ->
   button.click ->
     element.remove()
     update_wrap()
+
+  button.hide()
+
+  element.mouseover -> button.show()
+
+  element.mouseout -> button.hide()
+
+  return button
+add_drag_handle = (element) ->
+  button = $ "<div></div>"
+  button.css
+    borderRadius: "5px 5px 0 0"
+    "-moz-border-radius": "5px 5px 0 0"
+    background: "#ccc"
+    position: "absolute"
+    bottom: "100%"
+    left: 0
+    color: "black"
+    zIndex: 100
+    padding: "3px 5px"
+    fontSize: "10px"
+    fontWeight: "bold"
+    fontFamily: "sans-serif"
+    cursor: "ns-resize"
+  button.text "drag to reorder"
+  button.addClass "handle"
+  element.append button
+
+  button.hide()
+
+  element.mouseover -> button.show()
+
+  element.mouseout -> button.hide()
 
   return button
 
@@ -72,7 +106,7 @@ add_item = ->
     backgroundColor:"rgba(255,255,255,.9)"
     border:"1px dashed #ccc"
     width: grid_size*10 - 4 #2 for border width
-    height: grid_size*10 - 4
+    height: grid_size*7 - 4
     overflow: "hidden"
     zIndex: 10
     textAlign: "center"
@@ -80,7 +114,6 @@ add_item = ->
   $("#page_content").append wrapper
   wrapper.append new_item
   
-
   content = $ "<img />"
   content.attr 'src', 'http://img716.imageshack.us/img716/1621/pokemon1.png'
   content.attr 'alt', 'happy pokemon'
@@ -158,10 +191,20 @@ add_body_text = ->
 
   make_wrap new_text
 
+make_draggable = (element) ->
+  element.addClass "sortable"
+  $("#page_content").sortable
+    items: ".sortable"
+    handle: ".handle"
+
 make_editable = (element) ->
   element.state = "preview"
   element.attr("contenteditable", "true")
 
+  add_drag_handle element
+  make_draggable element
+
+  add_close_button element
 
   element.mouseenter ->
     if element.state == "preview"
