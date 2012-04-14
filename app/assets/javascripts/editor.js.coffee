@@ -157,7 +157,10 @@ update_wrap = ->
   dimensions.sort (a, b) ->
     a.bottom - b.bottom
 
-  max_y = dimensions[dimensions.length - 1].bottom/grid_size + 1
+  if dimensions.length > 0
+    max_y = dimensions[dimensions.length - 1].bottom/grid_size + 1
+  else
+    max_y = 5
   left_constraint_grid = []
   right_constraint_grid = []
 
@@ -166,7 +169,6 @@ update_wrap = ->
     right_constraint_grid.push(720)
 
   get_borders_canvas().attr("height", max_y*grid_size)
-  $("#page_content").css "minHeight", max_y*grid_size
 
   for dim in dimensions
     top_grid = Math.floor(dim.top/grid_size + .5)
@@ -179,50 +181,58 @@ update_wrap = ->
       for grid_index in [top_grid..bottom_grid]
         left_constraint_grid[grid_index] = Math.max(left_constraint_grid[grid_index], dim.right)
 
-  console.log [left_constraint_grid, right_constraint_grid]  
+  draw_borders = ->
+    canvas = get_borders_canvas() 
+    context = canvas.get(0).getContext("2d")
 
-  canvas = get_borders_canvas() 
-  context = canvas.get(0).getContext("2d")
+    context.clearRect 0, 0, canvas.width(), canvas.height()
 
-  context.clearRect 0, 0, canvas.width(), canvas.height()
+    context.beginPath()
+    context.moveTo left_constraint_grid[0], 0
 
-  context.beginPath()
-  context.moveTo left_constraint_grid[0], 0
+    for item, i in left_constraint_grid
+      context.lineTo item, i*grid_size
 
-  for item, i in left_constraint_grid
-    context.lineTo item, i*grid_size
+    context.stroke()
+    
+    context.beginPath()
+    context.moveTo(right_constraint_grid[0], 0)
 
-  context.stroke()
-  
-  context.beginPath()
-  context.moveTo(right_constraint_grid[0], 0)
+    for item, i in right_constraint_grid
+      context.lineTo item, i*grid_size
 
-  for item, i in right_constraint_grid
-    context.lineTo item, i*grid_size
-
-  context.stroke()
+    context.stroke()
 
   wrapping_elements.sort (a,b) ->
     a.offset().top - b.offset().top
 
   for element in wrapping_elements
-    element.css "background", "red"
+    element.css
+      marginLeft: 0
+      marginRight: 0
 
-measurer = $ "<div></div>"
-$ ->
-  measurer.css 
-    position:"absolute"
-    left:"2000px"
-    top:"0px"
-  
-  $("body").append measurer
+    top_grid_pos = Math.floor((element.position().top + parseInt element.css("marginTop"))/grid_size)
+    bottom_grid_pos = Math.floor((element.position().top + parseInt(element.css("marginTop")) + element.height())/grid_size)
 
-measure = (text, width) ->
-  measurer.css {"width":width}
-  measurer.text text
-  return measurer.innerHeight()
+    left_max = Math.max.apply Math, (left_constraint_grid[top_grid_pos..bottom_grid_pos])
+    right_max = Math.min.apply Math, (right_constraint_grid[top_grid_pos..bottom_grid_pos])
+    console.log left_max
+    element.css
+      marginLeft: left_max
+      marginRight: width - right_max
 
-split_text = (text, width, height) ->
+measure = (element, width, text_length) ->
+  copy = element.clone()
+  copy.text(copy.text().slice(0, text_length))
+  copy.css
+    position: "absolute"
+    right: 9999
+    "width": width
+  element.parent().append(copy)
+  return copy.innerHeight()
+
+split_text = (element, width, height) ->
+  text = element.text()
   num_chars = text.length;
 
   binary_search = (low, high) ->
@@ -231,7 +241,7 @@ split_text = (text, width, height) ->
 
     boundary = (high+low)/2
 
-    height_measure = measure(text.slice(0,boundary), width)
+    height_measure = measure(element, width, boundary)
 
     if height_measure > height
       return binary_search(low, boundary)
