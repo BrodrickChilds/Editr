@@ -31,12 +31,39 @@ draw_grid = ->
     context.lineTo grid_width, y_pos
     context.stroke()
 
+add_close_button = (element) ->
+  button = $ "<div></div>"
+  button.css
+    borderRadius: 5
+    "-moz-border-radius": 5
+    background: "#900"
+    position: "absolute"
+    top: -5
+    right: -5
+    color: "white"
+    zIndex: 100
+    padding: "3px 5px"
+    fontSize: ".7em"
+    fontFamily: "sans-serif"
+    cursor: "pointer"
+  button.text "X"
+  button.addClass "close-button"
+  element.append button
+
+  button.click ->
+    element.remove()
+    update_wrap()
+
+  return button
+
 add_item = ->
   wrapper = $ "<div></div>"
   wrapper.css
     position: "absolute"
     top: 0
     left: 0
+
+  add_close_button wrapper
 
   grid_size = $("#page_content").width()/num_cols
   
