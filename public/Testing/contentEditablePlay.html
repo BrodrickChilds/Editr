@@ -1,0 +1,160 @@
+<html>
+
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>Toolbar</title>
+
+<!-- Load style sheets -->
+<link rel="stylesheet" type="text/css" href="toolbar.css" />
+
+<!-- Load any supplemental Javascript libraries here -->
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script type="text/javascript">onload = function() {
+content.focus()
+}
+</script>
+</head>
+
+<body>
+  
+  <script type="text/javascript">
+    var getSelected = function(){
+      var t = '';
+      if(window.getSelection){
+        t = window.getSelection();
+      }else if(document.getSelection){
+        t = document.getSelection();
+      }else if(document.selection){
+        t = document.selection.createRange().text;
+      }
+      return t;
+    }
+    
+    var getStyles = function(){
+      var node = window.getSelection().anchorNode.parentNode;
+      var styles = {bold:false, italic:false};
+      while(!$(node).attr('contenteditable')){
+        if ($(node).css('fontWeight') == 700 || $(node).css('fontWeight') == 'bold'){
+          styles.bold = true;
+        }
+        if ($(node).css('fontStyle') == 'italic'){
+          styles.italic = true;
+        }
+        node = node.parentNode;
+      }
+      return styles;
+
+    }
+    
+    var setSelectionRange = function(input, selectionStart, selectionEnd) {
+      if (input.setSelectionRange) {
+        input.focus();
+        input.setSelectionRange(selectionStart, selectionEnd);
+      }
+      else if (input.createTextRange) {
+        var range = input.createTextRange();
+        range.collapse(true);
+        range.moveEnd('character', selectionEnd);
+        range.moveStart('character', selectionStart);
+        range.select();
+      }
+    }
+    
+    
+    var selectElementText = function(el, win){
+      win = win || window;
+      var doc = win.document, sel, range;
+      if (doc.body.createTextRange) {
+        range = doc.body.createTextRange();
+        range.moveToElementText(el);
+        range.select();
+      }
+    }
+
+
+    
+    var insertStyle = function(e){
+      if (window.getSelection) {  // all browsers, except IE before version 9
+        var selection = window.getSelection ();
+        if (selection.rangeCount > 0) {
+          var range = selection.getRangeAt (0);
+          range.insertNode(e);
+          range.collapseAfter(e);
+          e.focus();
+          selectElementText(e, window);
+        }
+      }
+    }
+    
+    var switchBorder = function(e){
+      if(e.css('border-bottom-style') == 'inset'){
+        e.css('border-style', 'none');
+      }
+      else{
+        e.css('border-style', 'inset');
+      }
+    }
+    $( function(){
+      
+      $("#toolbar_bold").click(function(e){
+        var selected = getSelected();
+        if(selected == ""){
+          var boldNode = document.createElement('b');
+          insertStyle(boldNode);
+        } else {
+          document.execCommand('bold',false,null);
+          switchBorder($("#toolbar_bold"));
+        }
+        $(window.getSelection().anchorNode).parents(".content").focus();
+      });
+      $("#toolbar_italic").click(function(e){
+        var selected = getSelected();
+        
+        if(selected == ""){
+          var italicNode = document.createElement('i');
+          insertStyle(italicNode);
+        } else {
+          document.execCommand('italic',false,null);
+          switchBorder($("#toolbar_italic"));
+        }
+        $(window.getSelection().anchorNode).parents(".content").focus();
+      });
+      
+      $(".content").click(function(e){
+        curFocus = window.getSelection();
+        var styles = getStyles();
+        if(styles.bold){
+          $("#toolbar_bold").css('border-style',  'inset');
+        }
+        else{
+          $("#toolbar_bold").css('border-style',  'none');
+        }
+        if(styles.italic){
+          $("#toolbar_italic").css('border-style',  'inset');
+        }
+        else{
+          $("#toolbar_italic").css('border-style',  'none');
+        }
+      });
+    });
+</script>
+  
+  
+  <div class="clearfix" id="floatingbar"><ul> 
+  <li><button id="toolbar_bold" style="font-style:bold; border-style:none">B</button></li> 
+  <li><button id="toolbar_italic" style="font-style:italic; border-style:none">I</button></li> 
+  <li><button id="toolbar_alignment"> Alignment </button></li>
+  <li><a href="#">Item name</a></li>
+  </ul>
+  <div style="clear:both"></div></div>
+  <br />
+  <br />
+  <br />
+
+  <div class="content" contenteditable="true"> edit this text </div>
+  
+  
+
+</body>
+
+</html>

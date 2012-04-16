@@ -1,0 +1,66 @@
+﻿ div#floatingbar
+    {
+    /*overflow: hidden;*/
+    width: 100%;
+    height: 38px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #000;
+    font-family:Arial;
+    font-weight:bold;
+    background: #e9f6fd; /* Old browsers */
+		background: -moz-linear-gradient(-45deg, #e9f6fd 0%, #d3eefb 100%); /* FF3.6+ */
+		background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,#e9f6fd), color-stop(100%,#d3eefb)); /* Chrome,Safari4+ */
+		background: -webkit-linear-gradient(-45deg, #e9f6fd 0%,#d3eefb 100%); /* Chrome10+,Safari5.1+ */
+		background: -o-linear-gradient(-45deg, #e9f6fd 0%,#d3eefb 100%); /* Opera 11.10+ */
+		background: -ms-linear-gradient(-45deg, #e9f6fd 0%,#d3eefb 100%); /* IE10+ */
+		background: linear-gradient(-45deg, #e9f6fd 0%,#d3eefb 100%); /* W3C */
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e9f6fd', endColorstr='#d3eefb',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+    }
+ 
+#floatingbar ul {
+list-style-type:none;
+}
+#floatingbar ul li
+{
+float: left; 
+color:#666; 
+margin-top:-10px;
+display:block;
+margin-right:5px;
+}
+#floatingbar ul li a
+{
+display:block;
+text-decoration:none;
+color:#333; 
+font-size:12px;  
+font-weight:normal;
+font-family:Arial;
+}
+#floatingbar ul li a:hover 
+{ 
+color:#000033;
+}
+
+.clearfix:after {
+	content: ".";
+	display: block;
+	clear: both;
+	visibility: hidden;
+	line-height: 0;
+	height: 0;
+}
+ 
+.clearfix {
+	display: inline-block;
+}
+ 
+html[xmlns] .clearfix {
+	display: block;
+}
+ 
+* html .clearfix {
+	height: 1%;
+}
