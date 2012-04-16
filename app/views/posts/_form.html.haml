@@ -1,8 +1,26 @@
 %div.sidebar
-  %button#add_rectangle Add Item
-  %button#add_header Add Header
-  %button#add_section_title Add Section Title
-  %button#add_text_section Add Text Section
+  %div
+    %button.postAction.publish#publish PUBLISH
+  %div
+    %button.postAction#save Save
+    %button.postAction#preview Preview
+  %div.undoRedoDiv
+    %button.iconButton#undo UNDO
+    %button.iconButton#redo REDO
+  %div.copyPasteDiv
+    %button.iconButton#cut CUT
+    %button.iconButton#copy COPY
+    %button.iconButton#paste PASTE
+  %div.addItemDiv
+    %button.add#add_rectangle + New Item
+  %div
+    %button.add#add_header + New Header
+  %div
+    %button.add#add_section_title + New Section Title
+  %div
+    %button.add#add_text_section + New Text Section
+  %div
+    %button.add#add_more + More...
 
 %div.main_view
   .page
