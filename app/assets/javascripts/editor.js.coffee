@@ -104,6 +104,8 @@ add_body_text = ->
 
 make_editable = (element) ->
   element.state = "preview"
+  
+  attachEvents(element)
 
   element.mouseenter ->
     if element.state == "preview"
@@ -116,6 +118,8 @@ make_editable = (element) ->
 
   element.click (event) ->
     if element.state == "preview"
+      toolbar = $('#floatingbar')
+      toolbar.css("display", "block")
       element.css("border", "1px dashed #ccc")
       element.attr("contenteditable", "true")
       element.state = "editing"
@@ -123,6 +127,7 @@ make_editable = (element) ->
         $(".page").one "click", ->
           element.state = "preview"
           element.removeAttr "contenteditable"
+          toolbar.css("display", "none")
           element.css("border", "none")
           element.css("padding", 5)
       setTimeout setEvent, 100

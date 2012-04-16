@@ -9,6 +9,20 @@
     %canvas#grid{:width => 720, :height => 400}
     %canvas#borders{:width => 720, :height => 400}
     #page_content
+    %div.clearfix#floatingbar{:style=>"display:none"}
+      %ul 
+        %li
+          %button#toolbar_bold{:style=>"font-style:bold; border-style:none"}
+            B
+        %li
+          %button#toolbar_italic{:style=>"font-style:italic; border-style:none"}
+            I
+        %li
+          %button#toolbar_alignment
+            Alignment
+      %div{:style=>"clear:both"}
+    %br
+    %br
 
 = form_for @post do |f|
   -if @post.errors.any?
