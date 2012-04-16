@@ -56,13 +56,9 @@ add_item = ->
     grid:[grid_size,grid_size]
   
 
-  content = $ "<div></div>"
-  content.attr "contenteditable", "true"
-  content.text "Hello world"
-  content.addClass "do_not_drag"
-
-  content.css
-    margin: 10
+  content = $ "<img />"
+  content.attr 'src', 'http://img716.imageshack.us/img716/1621/pokemon1.png'
+  content.attr 'alt', 'happy pokemon'
 
   new_item.append content
 
