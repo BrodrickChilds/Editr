@@ -5,6 +5,9 @@ get_grid_canvas = -> $("#grid")
 get_borders_canvas = -> $("#borders")
 get_page_content = -> $("#page_content")
 
+delay = (func) ->
+  setTimeout func, 50
+
 draw_grid = ->
   grid = get_grid_canvas()
   context = grid.get(0).getContext "2d"
@@ -84,9 +87,6 @@ add_item = ->
   content = $ "<img />"
   content.attr 'src', 'http://img716.imageshack.us/img716/1621/pokemon1.png'
   content.attr 'alt', 'happy pokemon'
- 
-  delay = (func) ->
-    setTimeout func, 50
 
   delay ->
     content.origWidth = content.width()
@@ -174,7 +174,8 @@ make_editable = (element) ->
   element.click (event) ->
     if element.state == "preview"
       toolbar = $('#floatingbar')
-      toolbar.css("display", "block")
+      delay -> 
+        toolbar.css("display", "block")
       element.css("border", "1px dashed #ccc")
       element.state = "editing"
       setEvent = ->
