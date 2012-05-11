@@ -198,9 +198,17 @@ make_draggable = (element) ->
     handle: ".handle"
 
 make_editable = (element) ->
+
+  editable_part = $("<div></div>")
+  editable_part.html(element.html())
+  element.html("")
+
+  element.append(editable_part)
+
   element.state = "preview"
-  attachEvents(element)
-  element.attr("contenteditable", "true")
+
+  attachEvents(editable_part)
+  editable_part.attr("contenteditable", "true")
 
   add_drag_handle element
   make_draggable element
@@ -216,7 +224,7 @@ make_editable = (element) ->
       element.css("border", "none")
       element.css("padding", 5)
 
-  element.click (event) ->
+  editable_part.click (event) ->
     if element.state == "preview"
       toolbar = $('#floatingbar')
       delay -> 
@@ -274,12 +282,14 @@ update_wrap = ->
     top_grid = Math.floor(dim.top/grid_size + .5)
     bottom_grid = Math.floor(dim.bottom/grid_size - .5)
 
-    if dim.left > width - dim.right
+    if dim.left - left_constraint_grid[top_grid] > width - dim.right
       for grid_index in [top_grid..bottom_grid]
         right_constraint_grid[grid_index] = Math.min(right_constraint_grid[grid_index], dim.left)
     else
       for grid_index in [top_grid..bottom_grid]
         left_constraint_grid[grid_index] = Math.max(left_constraint_grid[grid_index], dim.right)
+
+  
 
   draw_borders = ->
     canvas = get_borders_canvas() 
@@ -302,6 +312,8 @@ update_wrap = ->
       context.lineTo item, i*grid_size
 
     context.stroke()
+
+  draw_borders()
 
   wrapping_elements.sort (a,b) ->
     a.offset().top - b.offset().top
