@@ -93,14 +93,24 @@ add_drag_handle = (element) ->
 
   return button
 
-add_item = ->
-  wrapper = $ "<div></div>"
-  wrapper.css
-    position: "absolute"
-    top: 0
-    left: 0
+add_resize_handles = (element) ->
+  jquery_ui_args = {}
 
-  add_close_button wrapper
+  for name in ["n", "s", "e", "w", "se", "sw", "nw"]
+    
+    handle = $("<div></div>")
+    handle.text " "
+    handle.addClass "ui-resizable-" + name
+    handle.addClass "ui-resizable-handle"
+    handle.addClass "resize-handle"
+    handle.addClass name
+    handle.addClass "do_not_drag"
+    element.append handle
+    jquery_ui_args[name] = handle
+
+  return jquery_ui_args
+
+add_item = ->
 
   grid_size = $("#page_content").width()/num_cols
   
@@ -110,12 +120,17 @@ add_item = ->
     border:"1px dashed #ccc"
     width: grid_size*10 - 4 #2 for border width
     height: grid_size*7 - 4
-    overflow: "hidden"
     zIndex: 10
     textAlign: "center"
+    position: "absolute"
+    top: 0
+    left: 0
 
+  wrapper = new_item
+  
+  add_close_button wrapper
+  jquery_resize_handles = add_resize_handles wrapper
   $("#page_content").append wrapper
-  wrapper.append new_item
   
   content = $ "<img />"
   content.attr 'src', 'http://img716.imageshack.us/img716/1621/pokemon1.png'
@@ -131,9 +146,10 @@ add_item = ->
     height: -1
 
   resize_handler = ->
+
     delay ->
       if new_item.width() != new_item.prev_size.width or new_item.height() != new_item.prev_size.height
-        setTimeout update_wrap
+        delay update_wrap
       wrapper.prev_location =
         width: new_item.width()
         height: new_item.height()
@@ -144,9 +160,6 @@ add_item = ->
       else
         content.width(new_item.width())
         content.height(content.width()/content.aspectRatio)
-  new_item.resizable
-    grid:[grid_size,grid_size]
-    resize: resize_handler
 
   new_item.append content
   resize_handler()
@@ -167,6 +180,16 @@ add_item = ->
     containment:"#page_content"
     cancel: ".do_not_drag"
     drag: item_drag_handler
+
+  resizable_options =
+    grid:[grid_size,grid_size]
+    resize: resize_handler
+    handles: jquery_resize_handles
+    containment: "#page_content"
+
+  console.log resizable_options
+
+  new_item.resizable resizable_options
 
 add_header = ->
   new_header = $ "<h1>This is a header</h1>"
@@ -339,7 +362,7 @@ update_wrap = ->
     if left_max > 0
       left_max += margin
 
-    if right_max > 0
+    if right_max < width
       right_max -= margin
 
     element.css

@@ -1,0 +1,43 @@
+$resize-handle-radius: 4px;
+
+.resize-handle {
+  -moz-border-radius: $resize-handle-radius;
+  border-radius: $resize-handle-radius;
+  width: 2*$resize-handle-radius;
+  height: 2*$resize-handle-radius;
+  position: absolute;
+  overflow: hidden;
+  background: #eee;
+
+  margin: -1*$resize-handle-radius;
+
+  border: 1px solid #777;
+
+  box-shadow: 0 0 3px rgba(0,0,0,.3);
+
+  z-index: 1000;
+
+  &.n, &.ne, &.nw {
+    top: 0;
+    }
+
+  &.s, &.se, &.sw {
+    bottom: 0;
+  }
+
+  &.e, &.se, &.ne {
+    right: 0;
+  }
+
+  &.w, &.nw, &.sw {
+    left: 0;
+  }
+
+  &.n, &.s {
+    left: 50%;
+  }
+
+  &.e, &.w {
+    top: 50%;
+  }
+}
