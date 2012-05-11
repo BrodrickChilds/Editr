@@ -7,12 +7,8 @@
     %button.postAction#save Save
     %button.postAction#preview Preview
   %div.undoRedoDiv
-    %button.iconButton#undo UNDO
-    %button.iconButton#redo REDO
-  %div.copyPasteDiv
-    %button.iconButton#cut CUT
-    %button.iconButton#copy COPY
-    %button.iconButton#paste PASTE
+    %button.undoRedo#undo UNDO
+    %button.undoRedo#redo REDO
   %div.addItemDiv
     %button.add#add_rectangle + New Image
   %div
@@ -25,23 +21,22 @@
     %button.add#add_more + More...
 
 %div.main_view
+  %div.clearfix#floatingbar{:style=>"display:none"}
+    %ul 
+      %li
+        %button.unpressed.squareButton.button#toolbar_bold{:style=>"font-style:bold;"}
+          B
+      %li
+        %button.unpressed.squareButton.button#toolbar_italic{:style=>"font-style:italic;"}
+          I
+      %li
+        %button.unpressed.button#toolbar_alignment
+          Alignment
+    %div{:style=>"clear:both"}
   .page
     %canvas#grid{:width => 720, :height => 400}
     %canvas#borders{:width => 720, :height => 400}
     #page_content
-    %div.clearfix#floatingbar{:style=>"display:none"}
-      %ul 
-        %li
-          %button#toolbar_bold{:style=>"font-style:bold; border-style:none"}
-            B
-        %li
-          %button#toolbar_italic{:style=>"font-style:italic; border-style:none"}
-            I
-        %li
-          %button#toolbar_alignment
-            Alignment
-      %div{:style=>"clear:both"}
-    %br
     %br
 %div{:style=>"display: none"}
   = form_for @post do |f|

@@ -1,3 +1,18 @@
+var place_cursor = function(el) {
+	el = $(el);
+	var range = document.createRange();
+	var sel = window.getSelection();
+	var index = el.text().indexOf('$cursorhere$');
+	range.setStart(el.get(0).childNodes[0], index );
+	range.setEnd(el.get(0).childNodes[0], index + 12 );
+	event_on = false;
+	range.deleteContents();
+	range.collapse(true);
+	sel.removeAllRanges();
+	sel.addRange(range);
+	event_on = true;
+}
+
 var getSelected = function(){
 	var t = '';
 	if(window.getSelection){
@@ -45,26 +60,26 @@ var attachEvents = function(element){
 		curFocus = window.getSelection();
 		var styles = getStyles();
 		if(styles.bold){
-			$("#toolbar_bold").css('border-style',  'inset');
+			$("#toolbar_bold").removeClass('unpressed').addClass('pressed');
 		}
 		else{
-			$("#toolbar_bold").css('border-style',  'none');
+			$("#toolbar_bold").removeClass('pressed').addClass('unpressed');
 		}
 		if(styles.italic){
-			$("#toolbar_italic").css('border-style',  'inset');
+			$("#toolbar_italic").removeClass('unpressed').addClass('pressed');
 		}
 		else{
-			$("#toolbar_italic").css('border-style',  'none');
+			$("#toolbar_italic").removeClass('pressed').addClass('unpressed');
 		}
 	});
 }
 
 var switchBorder = function(e){
-	if(e.css('border-bottom-style') == 'inset'){
-		e.css('border-style', 'none');
+	if(e.hasClass('unpressed')){
+		e.removeClass('unpressed').addClass('pressed');
 	}
 	else{
-		e.css('border-style', 'inset');
+		e.removeClass('pressed').addClass('unpressed');
 	}
 }
 $( function(){
@@ -74,6 +89,9 @@ $( function(){
 		if(selected == ""){
 			var boldNode = document.createElement('b');
 			insertStyle(boldNode);
+			$(boldNode).append("$cursorhere$");
+			place_cursor(boldNode);
+			switchBorder($("#toolbar_bold"));
 		} else {
 			document.execCommand('bold',false,null);
 			switchBorder($("#toolbar_bold"));
@@ -87,6 +105,9 @@ $( function(){
 		if(selected == ""){
 			var italicNode = document.createElement('i');
 			insertStyle(italicNode);
+			$(italicNode).append("$cursorhere$");
+			place_cursor(italicNode);
+			switchBorder($("#toolbar_italic"));
 		} else {
 			document.execCommand('italic',false,null);
 			switchBorder($("#toolbar_italic"));
