@@ -187,7 +187,7 @@ add_body_text = ->
   new_text.addClass "text_section"
   $("#page_content").append new_text
 
-  make_editable new_text
+  make_editable new_text, true
 
   make_wrap new_text
 
@@ -197,7 +197,7 @@ make_draggable = (element) ->
     items: ".sortable"
     handle: ".handle"
 
-make_editable = (element) ->
+make_editable = (element, formattable=false) ->
 
   editable_part = $("<div></div>")
   editable_part.html(element.html())
@@ -207,7 +207,9 @@ make_editable = (element) ->
 
   element.state = "preview"
 
-  attachEvents(editable_part)
+  if formattable
+    attachEvents(editable_part)
+  
   editable_part.attr("contenteditable", "true")
 
   add_drag_handle element
@@ -227,14 +229,16 @@ make_editable = (element) ->
   editable_part.click (event) ->
     if element.state == "preview"
       toolbar = $('#floatingbar')
-      delay -> 
-        toolbar.css("display", "block")
+      if formattable
+        delay -> 
+          toolbar.css("display", "block")
       element.css("border", "1px dashed #ccc")
       element.state = "editing"
       setEvent = ->
         $(".page").one "click", ->
           element.state = "preview"
-          toolbar.css("display", "none")
+          if formattable
+            toolbar.css("display", "none")
           element.css("border", "none")
           element.css("padding", 5)
       setTimeout setEvent, 100
