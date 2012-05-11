@@ -89,7 +89,7 @@ $( function(){
 		if(selected == ""){
 			var boldNode = document.createElement('b');
 			insertStyle(boldNode);
-			$(boldNode).append("$cursorhere$");
+			$(boldNode).append("$cursorhere$" );
 			place_cursor(boldNode);
 			switchBorder($("#toolbar_bold"));
 		} else {
@@ -105,7 +105,7 @@ $( function(){
 		if(selected == ""){
 			var italicNode = document.createElement('i');
 			insertStyle(italicNode);
-			$(italicNode).append("$cursorhere$");
+			$(italicNode).append("$cursorhere$" );
 			place_cursor(italicNode);
 			switchBorder($("#toolbar_italic"));
 		} else {
