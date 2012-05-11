@@ -187,7 +187,7 @@ add_body_text = ->
   new_text.addClass "text_section"
   $("#page_content").append new_text
 
-  make_editable new_text
+  make_editable new_text, true
 
   make_wrap new_text
 
@@ -197,10 +197,20 @@ make_draggable = (element) ->
     items: ".sortable"
     handle: ".handle"
 
-make_editable = (element) ->
+make_editable = (element, formattable=false) ->
+
+  editable_part = $("<div></div>")
+  editable_part.html(element.html())
+  element.html("")
+
+  element.append(editable_part)
+
   element.state = "preview"
-  attachEvents(element)
-  element.attr("contenteditable", "true")
+
+  if formattable
+    attachEvents(editable_part)
+  
+  editable_part.attr("contenteditable", "true")
 
   add_drag_handle element
   make_draggable element
@@ -216,17 +226,19 @@ make_editable = (element) ->
       element.css("border", "none")
       element.css("padding", 5)
 
-  element.click (event) ->
+  editable_part.click (event) ->
     if element.state == "preview"
       toolbar = $('#floatingbar')
-      delay -> 
-        toolbar.css("display", "block")
+      if formattable
+        delay -> 
+          toolbar.css("display", "block")
       element.css("border", "1px dashed #ccc")
       element.state = "editing"
       setEvent = ->
         $(".page").one "click", ->
           element.state = "preview"
-          toolbar.css("display", "none")
+          if formattable
+            toolbar.css("display", "none")
           element.css("border", "none")
           element.css("padding", 5)
       setTimeout setEvent, 100
@@ -274,12 +286,14 @@ update_wrap = ->
     top_grid = Math.floor(dim.top/grid_size + .5)
     bottom_grid = Math.floor(dim.bottom/grid_size - .5)
 
-    if dim.left > width - dim.right
+    if dim.left - left_constraint_grid[top_grid] > width - dim.right
       for grid_index in [top_grid..bottom_grid]
         right_constraint_grid[grid_index] = Math.min(right_constraint_grid[grid_index], dim.left)
     else
       for grid_index in [top_grid..bottom_grid]
         left_constraint_grid[grid_index] = Math.max(left_constraint_grid[grid_index], dim.right)
+
+  
 
   draw_borders = ->
     canvas = get_borders_canvas() 
@@ -302,6 +316,8 @@ update_wrap = ->
       context.lineTo item, i*grid_size
 
     context.stroke()
+
+  draw_borders()
 
   wrapping_elements.sort (a,b) ->
     a.offset().top - b.offset().top
