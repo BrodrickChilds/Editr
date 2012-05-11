@@ -124,6 +124,10 @@ body {
 
   position: relative;
 
+  [contenteditable] {
+    outline: none;
+  }
+
   h1 {
     margin: 15px 0;
     font-size: 2em;
