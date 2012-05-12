@@ -24,84 +24,7 @@ add_drag_handle = (element) ->
 
 add_item = ->
 
-  grid_size = $("#page_content").width()/num_cols
-  
-  new_item = $ "<div></div>"
-  new_item.css
-    backgroundColor:"rgba(255,255,255,.9)"
-    border:"1px dashed #ccc"
-    width: grid_size*10 - 4 #2 for border width
-    height: grid_size*7 - 4
-    zIndex: 10
-    textAlign: "center"
-    position: "absolute"
-    top: 0
-    left: 0
-
-  wrapper = new_item
-  
-  $("#page_content").append wrapper
-  
-  content = $ "<img />"
-  content.attr 'src', 'http://img716.imageshack.us/img716/1621/pokemon1.png'
-  content.attr 'alt', 'happy pokemon'
-
-  window.utils.delay ->
-    content.origWidth = content.width()
-    content.origHeight = content.height()
-    content.aspectRatio = content.origWidth / content.origHeight
-
-  new_item.prev_size =
-    width: -1
-    height: -1
-
-  resize_handler = ->
-
-    window.utils.delay ->
-      if new_item.width() != new_item.prev_size.width or new_item.height() != new_item.prev_size.height
-        window.utils.delay update_wrap
-      wrapper.prev_location =
-        width: new_item.width()
-        height: new_item.height()
-      new_aspect_ratio = new_item.width()/new_item.height()
-      if new_aspect_ratio > content.aspectRatio
-        content.height(new_item.height())
-        content.width(content.height()*content.aspectRatio)
-      else
-        content.width(new_item.width())
-        content.height(content.width()/content.aspectRatio)
-
-  new_item.append content
-  resize_handler()
-
   boxes.push wrapper
-
-  wrapper.prev_location =
-    left: -1
-    top: -1
-
-  item_drag_handler = (event, ui) ->
-    if ui.position.left != wrapper.prev_location.left or ui.position.top != wrapper.prev_location.top
-      setTimeout update_wrap, 50
-    wrapper.prev_location = ui.position
-  
-  wrapper.draggable
-    grid:[grid_size,grid_size]
-    containment:"#page_content"
-    cancel: ".do_not_drag"
-    drag: item_drag_handler
-
-  resizable_options =
-    grid:[grid_size,grid_size]
-    resize: resize_handler
-    handles: jquery_resize_handles
-    containment: "#page_content"
-
-  new_item.resizable resizable_options
-
-  window.sel.set_deselect_area ".sidebar"
-  selectable = new window.sel.Deleteable(wrapper)
-  jquery_resize_handles = window.controls.add_resize_handles_to_selectable selectable
   
 add_header = ->
   new_header = $ "<h1>This is a header</h1>"
@@ -321,6 +244,10 @@ $ ->
     window.sel.set_deselect_area ".sidebar"
 
     image = new window.image_box.ImageBox(image_tag, $("#page_content"), grid_size)
+
+    boxes.push image.element
+
+    image.element.bind "modified", update_wrap
   $("#add_header").click ->
     add_header()
   $("#add_section_title").click ->
