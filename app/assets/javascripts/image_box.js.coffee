@@ -9,14 +9,10 @@ unless window.image_box
     constructor: (@image_tag, @container, @grid_size) ->
       
       @element = $ "<div></div>"
+      @element.addClass "image_box"
       @element.css
-        backgroundColor:"rgba(255,255,255,.9)"
-        border:"1px dashed #ccc"
         width: grid_size*10 - 4 #2 for border width
         height: grid_size*7 - 4
-        zIndex: 10
-        textAlign: "center"
-        position: "absolute"
         top: 0
         left: 0 
  
@@ -57,10 +53,11 @@ unless window.image_box
 
     
     drag_handler: (event, ui) =>
-      if ui.position.left != @prev_location.left or ui.position.top != @prev_location.top
-        window.utils.delay =>
+      window.utils.delay =>
+        if ui.position.left != @prev_location.left or ui.position.top != @prev_location.top
           @element.trigger "modified"
-      @prev_location = ui.position
+          console.log "why does logging this make it go faster?"
+        @prev_location = ui.position
     
     resize_handler: =>
       window.utils.delay =>
@@ -76,3 +73,22 @@ unless window.image_box
         else
           @image_tag.width(@element.width())
           @image_tag.height(@image_tag.width()/@aspectRatio)
+
+    select: =>
+      super()
+      @element.removeClass "mouseover"
+      @element.addClass "selected"
+
+    deselect: =>
+      super()
+      @element.removeClass "selected"
+      @element.removeClass "mouseover"
+
+    mouseover: =>
+      super()
+      unless @selected
+        @element.addClass "mouseover"
+
+    mouseout: =>
+      super()
+      @element.removeClass "mouseover"

@@ -10,28 +10,30 @@ unless window.sel
   class window.sel.Selectable
 
     constructor: (@element) ->
-      @element.mousedown @select
+      @element.mousedown @_select
       @element.mouseenter @mouseover
       @element.mouseleave @mouseout
 
       @selected = false
 
-    select: ->
+    _select: =>
       if this isnt window.sel.selected_object
         @element.trigger "select"
+        @select()
 
         if window.sel.selected_object?
-          window.sel.selected_object.deselect()
+          window.sel.selected_object._deselect()
 
         window.sel.selected_object = this
 
-        window.sel.deselect_area.one("mousedown", @deselect)
+        window.sel.deselect_area.one("mousedown", @_deselect)
 
         @selected = true
 
-    deselect: ->
+    _deselect: =>
       if this is window.sel.selected_object
         @element.trigger "deselect"
+        @deselect()
 
         window.sel.selected_object = null
 
@@ -61,11 +63,9 @@ unless window.sel
 
     select: =>
       @delete_button.show()
-      super()
 
     deselect: =>
       @delete_button.hide()
-      super()
 
     delete: =>
       @element.remove()

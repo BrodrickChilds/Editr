@@ -73,7 +73,7 @@ make_editable = (element, formattable=false) ->
   add_drag_handle element
   make_draggable element
 
-  add_close_button element
+  deleteable = new window.sel.Deleteable element
 
   element.mouseenter ->
     if element.state == "preview"
@@ -175,7 +175,7 @@ update_wrap = ->
 
     context.stroke()
 
-  draw_borders()
+  #draw_borders()
 
   wrapping_elements.sort (a,b) ->
     a.offset().top - b.offset().top
@@ -236,12 +236,12 @@ split_text = (element, width, height) ->
   return [text.slice(0, exact_char), text.slice(exact_char)]
 
 $ ->
+  window.sel.set_deselect_area ".sidebar"
   $("#add_rectangle").click ->
     image_tag = $ "<img />"
     image_tag.attr 'src', 'http://img716.imageshack.us/img716/1621/pokemon1.png'
     image_tag.attr 'alt', 'happy pokemon'
     grid_size = $("#page_content").width()/num_cols
-    window.sel.set_deselect_area ".sidebar"
 
     image = new window.image_box.ImageBox(image_tag, $("#page_content"), grid_size)
 
