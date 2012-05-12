@@ -1,3 +1,5 @@
+#= require selectable
+
 num_cols = 24
 margin = 5
 
@@ -8,87 +10,15 @@ get_page_content = -> $("#page_content")
 delay = (func) ->
   setTimeout func, 50
 
-draw_grid = ->
-  grid = get_grid_canvas()
-  context = grid.get(0).getContext "2d"
-
-  grid_width = grid.width()
-  cell_size = grid_width/num_cols
-
-  grid_height = grid.height()
-  num_rows = grid_height/cell_size
-
-  context.strokeStyle = "#eee"
-  context.lineWidth = 1
-
-  for col in [0..num_cols]
-    context.beginPath()
-    x_pos = Math.floor col*cell_size
-    context.moveTo x_pos, 0
-    context.lineTo x_pos, grid_height
-    context.stroke()
-  for row in [0..num_rows]
-    context.beginPath()
-    y_pos = Math.floor row*cell_size
-    context.moveTo 0, y_pos
-    context.lineTo grid_width, y_pos
-    context.stroke()
-
-add_close_button = (element) ->
-  button = $ "<div></div>"
-  button.css
-    borderRadius: 5
-    "-moz-border-radius": 5
-    background: "#900"
-    position: "absolute"
-    top: -5
-    right: -5
-    color: "white"
-    zIndex: 100
-    padding: "3px 5px"
-    fontSize: "10px"
-    fontWeight: "bold"
-    fontFamily: "sans-serif"
-    cursor: "pointer"
-  button.text "X"
-  button.addClass "close-button"
-  element.append button
-
-  button.click ->
-    element.remove()
-    update_wrap()
-
-  button.hide()
-
-  element.mouseover -> button.show()
-
-  element.mouseout -> button.hide()
-
-  return button
 add_drag_handle = (element) ->
   button = $ "<div></div>"
-  button.css
-    borderRadius: "5px 5px 0 0"
-    "-moz-border-radius": "5px 5px 0 0"
-    background: "#ccc"
-    position: "absolute"
-    bottom: "100%"
-    left: 0
-    color: "black"
-    zIndex: 100
-    padding: "3px 5px"
-    fontSize: "10px"
-    fontWeight: "bold"
-    fontFamily: "sans-serif"
-    cursor: "ns-resize"
   button.text "drag to reorder"
-  button.addClass "handle"
+  button.addClass "handle text-drag-handle"
   element.append button
 
   button.hide()
 
   element.mouseover -> button.show()
-
   element.mouseout -> button.hide()
 
   return button
@@ -128,7 +58,6 @@ add_item = ->
 
   wrapper = new_item
   
-  add_close_button wrapper
   jquery_resize_handles = add_resize_handles wrapper
   $("#page_content").append wrapper
   
@@ -187,9 +116,16 @@ add_item = ->
     handles: jquery_resize_handles
     containment: "#page_content"
 
-  console.log resizable_options
-
   new_item.resizable resizable_options
+
+  window.sel.set_deselect_area ".sidebar"
+  selectable = new window.sel.Deleteable(wrapper)
+  
+  wrapper.find(".resize-handle").hide()
+  wrapper.bind "select", ->
+    wrapper.find(".resize-handle").show()
+  wrapper.bind "deselect", ->
+    wrapper.find(".resize-handle").hide()
 
 add_header = ->
   new_header = $ "<h1>This is a header</h1>"
