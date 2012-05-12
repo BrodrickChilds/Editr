@@ -59,7 +59,7 @@ add_item = ->
 
     window.utils.delay ->
       if new_item.width() != new_item.prev_size.width or new_item.height() != new_item.prev_size.height
-        delay update_wrap
+        window.utils.delay update_wrap
       wrapper.prev_location =
         width: new_item.width()
         height: new_item.height()
@@ -314,7 +314,13 @@ split_text = (element, width, height) ->
 
 $ ->
   $("#add_rectangle").click ->
-    add_item()
+    image_tag = $ "<img />"
+    image_tag.attr 'src', 'http://img716.imageshack.us/img716/1621/pokemon1.png'
+    image_tag.attr 'alt', 'happy pokemon'
+    grid_size = $("#page_content").width()/num_cols
+    window.sel.set_deselect_area ".sidebar"
+
+    image = new window.image_box.ImageBox(image_tag, $("#page_content"), grid_size)
   $("#add_header").click ->
     add_header()
   $("#add_section_title").click ->
