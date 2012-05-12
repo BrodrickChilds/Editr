@@ -175,3 +175,20 @@ b {
 i {
   font-style: italic;
 }
+
+.text-drag-handle {
+  border-radius: 5px 5px 0 0;
+  -moz-border-radius: 5px 5px 0 0;
+  background: #ccc;
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  color: black;
+  z-index: 100;
+  padding: 3px 5px;
+  font-size: 10px;
+  font-weight: bold;
+  font-family: sans-serif;
+  cursor: ns-resize;
+ 
+}

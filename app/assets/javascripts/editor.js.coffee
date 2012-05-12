@@ -1,3 +1,7 @@
+#= require utils
+#= require selectable
+#= require controls
+
 num_cols = 24
 margin = 5
 
@@ -5,169 +9,23 @@ get_grid_canvas = -> $("#grid")
 get_borders_canvas = -> $("#borders")
 get_page_content = -> $("#page_content")
 
-delay = (func) ->
-  setTimeout func, 50
-
-draw_grid = ->
-  grid = get_grid_canvas()
-  context = grid.get(0).getContext "2d"
-
-  grid_width = grid.width()
-  cell_size = grid_width/num_cols
-
-  grid_height = grid.height()
-  num_rows = grid_height/cell_size
-
-  context.strokeStyle = "#eee"
-  context.lineWidth = 1
-
-  for col in [0..num_cols]
-    context.beginPath()
-    x_pos = Math.floor col*cell_size
-    context.moveTo x_pos, 0
-    context.lineTo x_pos, grid_height
-    context.stroke()
-  for row in [0..num_rows]
-    context.beginPath()
-    y_pos = Math.floor row*cell_size
-    context.moveTo 0, y_pos
-    context.lineTo grid_width, y_pos
-    context.stroke()
-
-add_close_button = (element) ->
-  button = $ "<div></div>"
-  button.css
-    borderRadius: 5
-    "-moz-border-radius": 5
-    background: "#900"
-    position: "absolute"
-    top: -5
-    right: -5
-    color: "white"
-    zIndex: 100
-    padding: "3px 5px"
-    fontSize: "10px"
-    fontWeight: "bold"
-    fontFamily: "sans-serif"
-    cursor: "pointer"
-  button.text "X"
-  button.addClass "close-button"
-  element.append button
-
-  button.click ->
-    element.remove()
-    update_wrap()
-
-  button.hide()
-
-  element.mouseover -> button.show()
-
-  element.mouseout -> button.hide()
-
-  return button
 add_drag_handle = (element) ->
   button = $ "<div></div>"
-  button.css
-    borderRadius: "5px 5px 0 0"
-    "-moz-border-radius": "5px 5px 0 0"
-    background: "#ccc"
-    position: "absolute"
-    bottom: "100%"
-    left: 0
-    color: "black"
-    zIndex: 100
-    padding: "3px 5px"
-    fontSize: "10px"
-    fontWeight: "bold"
-    fontFamily: "sans-serif"
-    cursor: "ns-resize"
   button.text "drag to reorder"
-  button.addClass "handle"
+  button.addClass "handle text-drag-handle"
   element.append button
 
   button.hide()
 
   element.mouseover -> button.show()
-
   element.mouseout -> button.hide()
 
   return button
 
 add_item = ->
-  wrapper = $ "<div></div>"
-  wrapper.css
-    position: "absolute"
-    top: 0
-    left: 0
-
-  add_close_button wrapper
-
-  grid_size = $("#page_content").width()/num_cols
-  
-  new_item = $ "<div></div>"
-  new_item.css
-    backgroundColor:"rgba(255,255,255,.9)"
-    border:"1px dashed #ccc"
-    width: grid_size*10 - 4 #2 for border width
-    height: grid_size*7 - 4
-    overflow: "hidden"
-    zIndex: 10
-    textAlign: "center"
-
-  $("#page_content").append wrapper
-  wrapper.append new_item
-  
-  content = $ "<img />"
-  content.attr 'src', 'http://img716.imageshack.us/img716/1621/pokemon1.png'
-  content.attr 'alt', 'happy pokemon'
-
-  delay ->
-    content.origWidth = content.width()
-    content.origHeight = content.height()
-    content.aspectRatio = content.origWidth / content.origHeight
-
-  new_item.prev_size =
-    width: -1
-    height: -1
-
-  resize_handler = ->
-    delay ->
-      if new_item.width() != new_item.prev_size.width or new_item.height() != new_item.prev_size.height
-        setTimeout update_wrap
-      wrapper.prev_location =
-        width: new_item.width()
-        height: new_item.height()
-      new_aspect_ratio = new_item.width()/new_item.height()
-      if new_aspect_ratio > content.aspectRatio
-        content.height(new_item.height())
-        content.width(content.height()*content.aspectRatio)
-      else
-        content.width(new_item.width())
-        content.height(content.width()/content.aspectRatio)
-  new_item.resizable
-    grid:[grid_size,grid_size]
-    resize: resize_handler
-
-  new_item.append content
-  resize_handler()
 
   boxes.push wrapper
-
-  wrapper.prev_location =
-    left: -1
-    top: -1
-
-  item_drag_handler = (event, ui) ->
-    if ui.position.left != wrapper.prev_location.left or ui.position.top != wrapper.prev_location.top
-      setTimeout update_wrap, 50
-    wrapper.prev_location = ui.position
   
-  wrapper.draggable
-    grid:[grid_size,grid_size]
-    containment:"#page_content"
-    cancel: ".do_not_drag"
-    drag: item_drag_handler
-
 add_header = ->
   new_header = $ "<h1>This is a header</h1>"
   $("#page_content").append new_header
@@ -215,7 +73,7 @@ make_editable = (element, formattable=false) ->
   add_drag_handle element
   make_draggable element
 
-  add_close_button element
+  deleteable = new window.sel.Deleteable element
 
   element.mouseenter ->
     if element.state == "preview"
@@ -230,7 +88,7 @@ make_editable = (element, formattable=false) ->
     if element.state == "preview"
       toolbar = $('#floatingbar')
       if formattable
-        delay -> 
+        window.utils.delay -> 
           toolbar.css("display", "block")
       element.css("border", "1px dashed #ccc")
       element.state = "editing"
@@ -317,7 +175,7 @@ update_wrap = ->
 
     context.stroke()
 
-  draw_borders()
+  #draw_borders()
 
   wrapping_elements.sort (a,b) ->
     a.offset().top - b.offset().top
@@ -339,7 +197,7 @@ update_wrap = ->
     if left_max > 0
       left_max += margin
 
-    if right_max > 0
+    if right_max < width
       right_max -= margin
 
     element.css
@@ -378,8 +236,18 @@ split_text = (element, width, height) ->
   return [text.slice(0, exact_char), text.slice(exact_char)]
 
 $ ->
+  window.sel.set_deselect_area ".sidebar"
   $("#add_rectangle").click ->
-    add_item()
+    image_tag = $ "<img />"
+    image_tag.attr 'src', 'http://img716.imageshack.us/img716/1621/pokemon1.png'
+    image_tag.attr 'alt', 'happy pokemon'
+    grid_size = $("#page_content").width()/num_cols
+
+    image = new window.image_box.ImageBox(image_tag, $("#page_content"), grid_size)
+
+    boxes.push image.element
+
+    image.element.bind "modified", update_wrap
   $("#add_header").click ->
     add_header()
   $("#add_section_title").click ->
