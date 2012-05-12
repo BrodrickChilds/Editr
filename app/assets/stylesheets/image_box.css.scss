@@ -1,0 +1,17 @@
+.image_box {
+
+  border: 1px solid #fff;
+
+  &.selected {
+    border: 1px dashed #ccc;
+  }
+  
+  &.mouseover {
+    border: 1px solid #ccc;
+  }
+
+  background-color: rgba(255,255,255,.9);
+  z-index: 10;
+  text-align: center;
+  position: absolute;
+}
