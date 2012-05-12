@@ -1,4 +1,6 @@
+#= require utils
 #= require selectable
+#= require controls
 
 num_cols = 24
 margin = 5
@@ -6,9 +8,6 @@ margin = 5
 get_grid_canvas = -> $("#grid")
 get_borders_canvas = -> $("#borders")
 get_page_content = -> $("#page_content")
-
-delay = (func) ->
-  setTimeout func, 50
 
 add_drag_handle = (element) ->
   button = $ "<div></div>"
@@ -22,23 +21,6 @@ add_drag_handle = (element) ->
   element.mouseout -> button.hide()
 
   return button
-
-add_resize_handles = (element) ->
-  jquery_ui_args = {}
-
-  for name in ["n", "s", "e", "w", "se", "sw", "nw"]
-    
-    handle = $("<div></div>")
-    handle.text " "
-    handle.addClass "ui-resizable-" + name
-    handle.addClass "ui-resizable-handle"
-    handle.addClass "resize-handle"
-    handle.addClass name
-    handle.addClass "do_not_drag"
-    element.append handle
-    jquery_ui_args[name] = handle
-
-  return jquery_ui_args
 
 add_item = ->
 
@@ -58,14 +40,13 @@ add_item = ->
 
   wrapper = new_item
   
-  jquery_resize_handles = add_resize_handles wrapper
   $("#page_content").append wrapper
   
   content = $ "<img />"
   content.attr 'src', 'http://img716.imageshack.us/img716/1621/pokemon1.png'
   content.attr 'alt', 'happy pokemon'
 
-  delay ->
+  window.utils.delay ->
     content.origWidth = content.width()
     content.origHeight = content.height()
     content.aspectRatio = content.origWidth / content.origHeight
@@ -76,7 +57,7 @@ add_item = ->
 
   resize_handler = ->
 
-    delay ->
+    window.utils.delay ->
       if new_item.width() != new_item.prev_size.width or new_item.height() != new_item.prev_size.height
         delay update_wrap
       wrapper.prev_location =
@@ -120,13 +101,8 @@ add_item = ->
 
   window.sel.set_deselect_area ".sidebar"
   selectable = new window.sel.Deleteable(wrapper)
+  jquery_resize_handles = window.controls.add_resize_handles_to_selectable selectable
   
-  wrapper.find(".resize-handle").hide()
-  wrapper.bind "select", ->
-    wrapper.find(".resize-handle").show()
-  wrapper.bind "deselect", ->
-    wrapper.find(".resize-handle").hide()
-
 add_header = ->
   new_header = $ "<h1>This is a header</h1>"
   $("#page_content").append new_header
@@ -189,7 +165,7 @@ make_editable = (element, formattable=false) ->
     if element.state == "preview"
       toolbar = $('#floatingbar')
       if formattable
-        delay -> 
+        window.utils.delay -> 
           toolbar.css("display", "block")
       element.css("border", "1px dashed #ccc")
       element.state = "editing"

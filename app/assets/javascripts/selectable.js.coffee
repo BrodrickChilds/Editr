@@ -44,8 +44,7 @@ unless window.sel
      
   class window.sel.Deleteable extends window.sel.Selectable
     constructor: (@element) ->
-      @delete_button = window.controls.make_delete_button()
-      @element.append @delete_button
+      @delete_button = window.controls.add_delete_button(@element)
       @delete_button.click @delete
       @delete_button.hide()
       console.log @element

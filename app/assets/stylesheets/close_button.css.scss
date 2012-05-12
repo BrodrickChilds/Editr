@@ -1,0 +1,15 @@
+.close-button {
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    background: #900;
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    color: white;
+    z-index: 100;
+    padding: 3px 5px;
+    font-size: 10px;
+    font-weight: bold;
+    font-family: sans-serif;
+    cursor: pointer;
+}
