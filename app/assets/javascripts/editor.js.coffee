@@ -10,7 +10,6 @@ get_borders_canvas = -> $("#borders")
 get_page_content = -> $("#page_content")
 
 add_item = ->
-
   boxes.push wrapper
   
 add_header = ->
@@ -154,37 +153,6 @@ update_wrap = ->
     element.css
       marginLeft: left_max
       marginRight: width - right_max
-
-measure = (element, width, text_length) ->
-  copy = element.clone()
-  copy.text(copy.text().slice(0, text_length))
-  copy.css
-    position: "absolute"
-    right: 9999
-    "width": width
-  element.parent().append(copy)
-  return copy.innerHeight()
-
-split_text = (element, width, height) ->
-  text = element.text()
-  num_chars = text.length;
-
-  binary_search = (low, high) ->
-    if high-low < 2
-      return low
-
-    boundary = (high+low)/2
-
-    height_measure = measure(element, width, boundary)
-
-    if height_measure > height
-      return binary_search(low, boundary)
-    else
-      return binary_search(boundary, high)
-
-  exact_char = binary_search(0, num_chars)
-
-  return [text.slice(0, exact_char), text.slice(exact_char)]
 
 $ ->
   window.sel.set_deselect_area ".sidebar"
