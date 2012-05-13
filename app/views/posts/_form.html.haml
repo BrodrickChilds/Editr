@@ -1,6 +1,6 @@
 %div.sidebar
   %div
-    %img{:src=>"/editr_logo.png"}
+    =image_tag "editr_logo.png"
   %div
     %button.postAction.publish#publish PUBLISH
   %div
@@ -11,6 +11,8 @@
     %button.undoRedo#redo REDO
   %div.addItemDiv
     %button.add#add_rectangle + New Image
+  %div.drawerDiv#imageDrawerDiv
+    %div.drawerContent#imageDrawerContent Lorem ipsum dolor sit amet, consectetur adipisicing elit, ...
   %div
     %button.add#add_header + New Header
   %div
@@ -19,6 +21,8 @@
     %button.add#add_text_section + New Text Section
   %div
     %button.add#add_more + More...
+
+%div.dialog#imageUploadDialog Add New Image
 
 %div.main_view
   %div.clearfix#floatingbar{:style=>"display:none"}
