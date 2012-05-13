@@ -82,41 +82,36 @@ var switchBorder = function(e){
 		e.removeClass('pressed').addClass('unpressed');
 	}
 }
+
+var changeSelectionStyle = function(html, node, command){
+  var selected = getSelected();
+  if(selected == ""){
+    insertStyle(node);
+    $(node).append("$cursorhere$");
+    place_cursor(node);
+    switchBorder($(html));
+  } else {
+    document.execCommand(command,false,null);
+    switchBorder($(html));
+  }
+  $(window.getSelection().anchorNode).parents("[contenteditable='true']").focus();
+  event.stopPropagation();
+}
+
 $( function(){
 	
 	$("#toolbar_bold").click(function(event){
 		var selected = getSelected();
-		if(selected == ""){
-			var boldNode = document.createElement('b');
-			insertStyle(boldNode);
-			$(boldNode).append("$cursorhere$" );
-			place_cursor(boldNode);
-			switchBorder($("#toolbar_bold"));
-		} else {
-			document.execCommand('bold',false,null);
-			switchBorder($("#toolbar_bold"));
-		}
-		$(window.getSelection().anchorNode).parents("[contenteditable='true']").focus();
-		event.stopPropagation();
+    var boldNode = document.createElement('b');
+    changeSelectionStyle($("#toolbar_bold"), boldNode, 'bold');
 	});
 	$("#toolbar_italic").click(function(event){
 		var selected = getSelected();
-		
-		if(selected == ""){
-			var italicNode = document.createElement('i');
-			insertStyle(italicNode);
-			$(italicNode).append("$cursorhere$" );
-			place_cursor(italicNode);
-			switchBorder($("#toolbar_italic"));
-		} else {
-			document.execCommand('italic',false,null);
-			switchBorder($("#toolbar_italic"));
-		}
-		$(window.getSelection().anchorNode).parents("[contenteditable='true']").focus();
-		event.stopPropagation();
+    var italicNode = document.createElement('i');
+		changeSelectionStyle($("#toolbar_italic"), italicNode, 'italic');
 	});
 	$("#toolbar_alignment").click(function(event){
-		var selected = getSelected();
+		/*var selected = getSelected();
 		
 		if(selected == ""){
 			
@@ -124,7 +119,7 @@ $( function(){
 			
 		}
 		$(window.getSelection().anchorNode).parents("[contenteditable='true']").focus();
-		event.stopPropagation();
+		event.stopPropagation();*/
 	});
 	$("#floatingbar").click(function(event){
 		$(window.getSelection().anchorNode).parents("[contenteditable='true']").focus();
