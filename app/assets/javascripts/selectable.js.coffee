@@ -39,10 +39,20 @@ unless window.sel
 
         @selected = false
 
-    mouseover: ->
+    select: =>
+      @element.removeClass "mouseover"
+      @element.addClass "selected"
 
-    mouseout: ->
-      
+    deselect: =>
+      @element.removeClass "selected"
+      @element.removeClass "mouseover"
+
+    mouseover: =>
+      unless @selected
+        @element.addClass "mouseover"
+
+    mouseout: =>
+      @element.removeClass "mouseover"      
      
   class window.sel.Deleteable extends window.sel.Selectable
     constructor: (@element) ->
@@ -53,18 +63,22 @@ unless window.sel
       super(@element)
 
     mouseover: =>
+      super()
       @delete_button.show()
       super()
 
     mouseout: =>
+      super()
       unless @selected
         @delete_button.hide()
       super()
 
     select: =>
+      super()
       @delete_button.show()
 
     deselect: =>
+      super()
       @delete_button.hide()
 
     delete: =>

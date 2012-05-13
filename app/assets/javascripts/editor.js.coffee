@@ -9,19 +9,6 @@ get_grid_canvas = -> $("#grid")
 get_borders_canvas = -> $("#borders")
 get_page_content = -> $("#page_content")
 
-add_drag_handle = (element) ->
-  button = $ "<div></div>"
-  button.text "drag to reorder"
-  button.addClass "handle text-drag-handle"
-  element.append button
-
-  button.hide()
-
-  element.mouseover -> button.show()
-  element.mouseout -> button.hide()
-
-  return button
-
 add_item = ->
 
   boxes.push wrapper
@@ -42,7 +29,7 @@ add_section_title = ->
 
 add_body_text = ->
   new_text = $ "<div>Body text</div>"
-  new_text.addClass "text_section"
+  new_text.addClass "body_text"
   $("#page_content").append new_text
 
   make_editable new_text, true
@@ -56,52 +43,16 @@ make_draggable = (element) ->
     handle: ".handle"
 
 make_editable = (element, formattable=false) ->
-
-  editable_part = $("<div></div>")
-  editable_part.html(element.html())
-  element.html("")
-
-  element.append(editable_part)
-
-  element.state = "preview"
-
-  if formattable
-    attachEvents(editable_part)
-  
-  editable_part.attr("contenteditable", "true")
-
-  add_drag_handle element
+  wrapping_text = new window.text.WrappingText element
   make_draggable element
+  if formattable
+    element.bind "select", ->
+      $("#floatingbar").show()
+    element.bind "deselect", ->
+      $("#floatingbar").hide()
+  if formattable
+    attachEvents(wrapping_text.content)
 
-  deleteable = new window.sel.Deleteable element
-
-  element.mouseenter ->
-    if element.state == "preview"
-      element.css("border", "1px solid #ccc")
-      element.css("padding", 4)
-  element.mouseleave ->
-    if element.state == "preview"
-      element.css("border", "none")
-      element.css("padding", 5)
-
-  editable_part.click (event) ->
-    if element.state == "preview"
-      toolbar = $('#floatingbar')
-      if formattable
-        window.utils.delay -> 
-          toolbar.css("display", "block")
-      element.css("border", "1px dashed #ccc")
-      element.state = "editing"
-      setEvent = ->
-        $(".page").one "click", ->
-          element.state = "preview"
-          if formattable
-            toolbar.css("display", "none")
-          element.css("border", "none")
-          element.css("padding", 5)
-      setTimeout setEvent, 100
-    else if element.state == "editing"
-      event.stopPropagation()
 
 wrapping_elements = []
 boxes = []

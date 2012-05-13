@@ -73,22 +73,3 @@ unless window.image_box
         else
           @image_tag.width(@element.width())
           @image_tag.height(@image_tag.width()/@aspectRatio)
-
-    select: =>
-      super()
-      @element.removeClass "mouseover"
-      @element.addClass "selected"
-
-    deselect: =>
-      super()
-      @element.removeClass "selected"
-      @element.removeClass "mouseover"
-
-    mouseover: =>
-      super()
-      unless @selected
-        @element.addClass "mouseover"
-
-    mouseout: =>
-      super()
-      @element.removeClass "mouseover"
