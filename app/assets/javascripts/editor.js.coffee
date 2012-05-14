@@ -359,24 +359,16 @@ html_slice = (element, cutoff) ->
  
   return copy
 
-
+###
 $ ->
   window.sel.set_deselect_area ".sidebar"
-  $("#add_rectangle").click =>
-    image_tag = $ "<img />"
-    image_tag.attr 'src', 'http://img716.imageshack.us/img716/1621/pokemon1.png'
-    image_tag.attr 'alt', 'happy pokemon'
-    grid_size = $("#page_content").width()/num_cols
-
-    image = new window.image_box.ImageBox(image_tag, $("#page_content"), grid_size)
-    split_wrap()
-    image.element.bind "modified", split_wrap
   $("#add_header").click ->
     add_header()
   $("#add_section_title").click ->
     add_section_title()
   $("#add_text_section").click ->
     add_body_text()
+###
 
 ###
   The below method is deprecated, and is currently being replaced with a new wrapping method.
@@ -459,12 +451,12 @@ insert_image = (image_url) ->
 
     image = new window.image_box.ImageBox(image_tag, $("#page_content"), grid_size)
 
-    boxes.push image.element
+    image.element.bind "modified", split_wrap
+window.images = {}
+window.images.insert_image = insert_image
 
-    image.element.bind "modified", update_wrap
 $ ->
   window.sel.set_deselect_area ".sidebar"
-  $("#add_rectangle").click insert_image
   $("#add_header").click ->
     add_header()
   $("#add_section_title").click ->

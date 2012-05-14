@@ -1,4 +1,4 @@
-
+//= require editor
 
 $(function(){
 
@@ -16,7 +16,7 @@ $(function(){
         "Attach Image": function(){
 
           var validURL = true;
-          validURL = validURL && checkURL(imageURL, /\.(jpg|png)$/i);
+          validURL = validURL && checkURL(imageURL, /\.(jpg|png|gif)$/i);
           if (validURL){
             addToMarquee(imageURL.val());
             $(this).dialog("close");
@@ -39,24 +39,19 @@ $(function(){
     openDialog();
   });
 
-  document.click(function(e){
-    if (isDescendant($("#imageDrawerContent"),$(e.target))){
-      alert(e.target.tagName);
-    }
+
+  $(document).click(function(e){
+    if (e.target.tagName.toLowerCase() == "img"){
+      if ($(e.target).is("#imageDrawerContent *")){
+        window.images.insert_image($(e.target).attr("src"));
+        removeFromMarquee($(e.target));
+      }
+    } 
   });
+
+  
+
 });
-
-function isDescendant(parent, child){
-  var node = child.parentNode;
-  while (node != null){
-    if (node == parent){
-      return true;
-    }
-    node = node.parentNode;
-  }
-  return false;
-
-}
 
 function openDrawer(){
   if ($("#imageDrawerContent").is(":hidden")){
@@ -74,7 +69,7 @@ function closeDrawer(){
 
 function addToMarquee(imageURL){
   openDrawer();
-  var content = document.getElementById("imageDrawerContent")
+  var content = document.getElementById("imageDrawerContent");
 
   var newSpan = document.createElement("span");
 
@@ -109,7 +104,15 @@ function addToMarquee(imageURL){
   content.scrollTop = content.scrollHeight;
 }
 
-function removeFromMarquee(imageURL){
+function removeFromMarquee(image){
+  var parentDiv = $(image).parent();
+  var parentSpan = $(parentDiv).parent();
+  var parent = $(parentSpan).parent();
+
+  $(parentSpan).remove();
+  if (!($("#imageDrawerContent").children().length>0)){
+    closeDrawer();
+  }
 }
 
 function openDialog(){
