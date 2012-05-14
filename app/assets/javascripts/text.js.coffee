@@ -28,9 +28,16 @@ unless window.text
 
       window.text.wrapping_texts.push(this)
 
+      @prev_height = @element.height()
+
+      @content.bind "DOMCharacterDataModified", =>
+        if @element.height() isnt @prev_height
+          @element.trigger "resize"
+          @prev_height = @element.height()
+
     delete: =>
       super()
-      window.text.wrapping_texts = text for text in window.text.wrapping_texts when text isnt this
+      window.text.wrapping_texts = (text for text in window.text.wrapping_texts when text isnt this)
 
     select: =>
       super()

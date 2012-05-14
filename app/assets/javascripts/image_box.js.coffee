@@ -44,14 +44,15 @@ unless window.image_box
           top: -1
 
         @element.draggable
-          grid: [@grid_size, @grid_size]
+          grid: [@grid_size/2, @grid_size/2]
           containment: @container
           cancel: ".do_not_drag"
-          drag: @drag_handler
+          stop: @drag_handler
 
         @element.resizable
-          grid:[@grid_size, @grid_size]
+          grid:[@grid_size/2, @grid_size/2]
           resize: @resize_handler
+          stop: @resize_stop
           handles: window.controls.add_resize_handles_to_selectable this
           containment: @container
 
@@ -62,14 +63,17 @@ unless window.image_box
           @element.trigger "modified"
           console.log "why does logging this make it go faster?"
         @prev_location = ui.position
-    
-    resize_handler: =>
+   
+    resize_stop: =>
       window.utils.delay =>
         if @element.width() != @prev_size.width or @element.height() != @prev_size.height
           @element.trigger "modified"
         @prev_size =
           width: @element.width()
           height: @element.height()
+
+    resize_handler: =>
+      window.utils.delay =>
         new_aspect_ratio = @element.width()/@element.height()
         if new_aspect_ratio > @aspectRatio
           @image_tag.height(@element.height())

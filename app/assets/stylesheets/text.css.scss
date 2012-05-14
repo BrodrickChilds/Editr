@@ -10,23 +10,6 @@
 
   position: relative;
 
-  .wrapping_text {
-    border: 1px solid rgba(0,0,0,0);
-  
-    margin-left: -1px;
-    margin-right: -1px;
-
-    &.mouseover {
-      border: 1px solid #ccc;
-    }
-
-    &.selected {
-      border: 1px dashed #ccc;
-    }
-
-
-  }
-
   [contenteditable] {
     outline: none;
   }
@@ -81,5 +64,6 @@
   font-size: 10px;
   font-weight: bold;
   font-family: sans-serif;
-  cursor: ns-resize; 
+  cursor: ns-resize;
+  height: 10px;
 }
