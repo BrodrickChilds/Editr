@@ -13,6 +13,7 @@ var place_cursor = function(el) {
 	event_on = true;
 }
 
+
 var getSelected = function(){
 	var t = '';
 	if(window.getSelection){
@@ -47,19 +48,13 @@ var getNodeAt = function(node, index){
   var nodeIndex = 0;
   var info = [node, 0, index, 0];
   var newInfo = treeRecurse(node, info);
-  if(newInfo[0] == node){ //Nothing happened.
-    return [node, 0];
-  }
-  else{
-    newInfo = [newInfo[0], newInfo[3]];
-    return newInfo;
-  }
+  return [newInfo[0], newInfo[3]+1];
 }
 
 var treeRecurse = function(node, info){
-  curOffset = info[1];
-  maxOffset = info[2];
-  if (curOffset >= maxOffset){
+  var curOffset = info[1];
+  var maxOffset = info[2];
+  if (curOffset > maxOffset){
     return info;
   }
   if(node.nodeType == 3){
@@ -73,7 +68,6 @@ var treeRecurse = function(node, info){
   else{
     var newInfo = info;
     for(var i = 0; i < node.childNodes.length; i++){
-      console.log(newInfo);
       newInfo = treeRecurse(node.childNodes[i], newInfo);
       if (newInfo[1]>=newInfo[2]){
         break;
@@ -144,9 +138,20 @@ var addSelectionStyle = function(style){
   return node;
 }
 
+var getCursorIndex = function(docNode){
+  var range = window.getSelection().getRangeAt(0);
+  var cursorNode = document.createElement('span');
+  $(cursorNode).append('$findcursor$');  
+  range.insertNode(cursorNode);
+  var allText = document.createRange();
+  allText.selectNodeContents(docNode);
+  var index = allText.toString().indexOf('$findcursor$');
+  $(cursorNode).remove();
+  return index+1;
+}
+
 var removeSelectionStyle = function(styles){
   var node = window.getSelection().anchorNode.parentNode;
-  var range = window.getSelection().getRangeAt(0);
   if(!$(window.getSelection().anchorNode).attr('contenteditable')){
 		while(!$(node.parentNode).attr('contenteditable')){
       node = node.parentNode;
@@ -162,21 +167,22 @@ var removeSelectionStyle = function(styles){
   if(styleList.length == 0){
     styleList.push('span');
   }
-  var insertLoc = splitRange(contentEditableNode, 5);
-  var range = document.createRange();
-	range.setStartAfter(insertLoc[0][0]);
-  range.setEndBefore(insertLoc[1][0]);
+  var cursorIndex = getCursorIndex(contentEditableNode);
+  var insertLoc = splitRange(contentEditableNode, cursorIndex);
+  var newRange = document.createRange();
+	newRange.setStartAfter(insertLoc[0][0]);
+  newRange.setEndBefore(insertLoc[1][0]);
   var innerNode = {};
   for(var i = 0; i<styleList.length; i++){
     var newNode = makeStyleNode(styleList[i]);
     if(i == 0){
       innerNode = newNode;
       $(newNode).append("$cursorhere$");
-      range.insertNode(newNode);  
-      range.setEndAfter(newNode);
+      newRange.insertNode(newNode);  
+      newRange.setEndAfter(newNode);
     }
     else{
-      range.surroundContents(newNode);
+      newRange.surroundContents(newNode);
     }
   }
   place_cursor(innerNode);
@@ -185,36 +191,35 @@ var removeSelectionStyle = function(styles){
 
 var splitRange = function(node, index){
   var entireRange = document.createRange();
-  var leftRange = document.createRange();
-  var rightRange = document.createRange();
-  entireRange.selectNodeContents(node);
-  var nodeOffset = getNodeAt(node, 6);
+  var nodeOffset = getNodeAt(node, index);
   var contentNode = nodeOffset[0];
+  var elText = "";
   entireRange.selectNodeContents(contentNode);
-  leftRange.setStart(contentNode, 0);
-  leftRange.setEnd(contentNode, nodeOffset[1]);
-  rightRange.setStart(contentNode, nodeOffset[1]);
-  rightRange.setEndAfter(contentNode);
+  elText = contentNode.parentNode.textContent;
+  var left = elText.substring(0, nodeOffset[1]);
+  var right = elText.substring(nodeOffset[1], elText.length);
   var leftInner = document.createElement('span');
   var rightInner = document.createElement('span');
-  $(leftInner).text(leftRange.toString());
-  $(rightInner).text(rightRange.toString());
+  $(leftInner).text(left.toString());
+  $(rightInner).text(right.toString());
+  console.log(leftInner);
+  var leftRange = document.createRange();
+  var rightRange = document.createRange();
   leftRange.selectNodeContents(leftInner);
   rightRange.selectNodeContents(rightInner);
   var leftClone;
   var rightClone;
-  while(!$(contentNode.parentNode).attr('contenteditable')){
+  while(!$(contentNode).attr('contenteditable') && !$(contentNode.parentNode).attr('contenteditable')){
     contentNode = contentNode.parentNode;
     rightClone = contentNode.cloneNode(false);
     leftClone = contentNode.cloneNode(false);
     leftRange.surroundContents(leftClone);
     rightRange.surroundContents(rightClone);
   }
-  deleteNode = entireRange.startContainer;
+  var deleteNode = entireRange.startContainer;
   while(!$(deleteNode.parentNode).attr('contenteditable')){
     deleteNode = deleteNode.parentNode;
   }
-  $(deleteNode).empty();
   $(leftClone).insertAfter($(deleteNode));
   $(rightClone).insertAfter($(leftClone));
   $(deleteNode).remove();
