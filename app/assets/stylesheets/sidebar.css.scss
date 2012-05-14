@@ -35,6 +35,7 @@
 }
 
 .postAction.publish{
+  margin-top: 25px;
   background: #BE4078;
   background: -webkit-gradient(linear, left top, left bottom, from (#BE4078), to (#B1185B));
   background: -moz-linear-gradient(top, #BE4078, #B1185B);
@@ -48,33 +49,6 @@
   background: -moz-linear-gradient(top, #814064, #711843);
 }
 
-.undoRedoDiv{
-  padding: 20px 0px 0px;
-}
-
-.undoRedo{
-  display:inline-block;
-  color:#fff;
-  background-color:#707070;
-  background: -webkit-gradient(linear, left top, left bottom, from (#8a8a8a), to (#707070));
-  background: -moz-linear-gradient(top, #8a8a8a, #707070);
-  border: 1px #000;
-  -moz-border-radius:5px;
-  -webkit-border-radius:5px;
-  font-weight:bold;
-  height: 30px;
-  margin-bottom:5px;
-  text-decoration:none;
-  text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
-  width:75px;
-}
-
-.undoRedo:hover{
-  background-color:#565656;
-  background: -webkit-gradient(linear, left top, left bottom, from (#606060), to (#565656));
-  background: -moz-linear-gradient(top, #606060, #565656);
-}
-
 .addItemDiv{
   padding:20px 0px 0px;
 }
@@ -85,6 +59,11 @@
   display:inline-block;
   color:#848484;
   background-color:#eee;
+  background: -webkit-gradient(linear, left top, left bottom, from(#f1f1f1), to(#ececec));
+  background: -webkit-linear-gradient(top, #f1f1f1, #ececec);
+  background: -moz-linear-gradient(top, #f1f1f1, #ececec);
+  background: -ms-linear-gradient(top, #f1f1f1, #ececec);
+  background: -o-linear-gradient(top, #f1f1f1, #ececec);
   border: 1px #000;
   -moz-border-radius:5px;
   -webkit-border-radius:5px;

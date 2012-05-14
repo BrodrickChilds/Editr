@@ -3,7 +3,7 @@
 $(function(){
 
   $("#add_rectangle").click(function(){
-    var imageURL = $("#URLinput")
+    var imageURL = $("#URLinput");
  
     $("#imageUploadDialog").dialog({
       autoOpen:false,
@@ -38,8 +38,25 @@ $(function(){
 
     openDialog();
   });
+
+  document.click(function(e){
+    if (isDescendant($("#imageDrawerContent"),$(e.target))){
+      alert(e.target.tagName);
+    }
+  });
 });
 
+function isDescendant(parent, child){
+  var node = child.parentNode;
+  while (node != null){
+    if (node == parent){
+      return true;
+    }
+    node = node.parentNode;
+  }
+  return false;
+
+}
 
 function openDrawer(){
   if ($("#imageDrawerContent").is(":hidden")){

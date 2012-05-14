@@ -6,9 +6,6 @@
   %div
     %button.postAction#save Save
     %button.postAction#preview Preview
-  %div.undoRedoDiv
-    %button.undoRedo#undo UNDO
-    %button.undoRedo#redo REDO
   %div.addItemDiv
     %button.add#add_rectangle + New Image
   %div.drawerDiv#imageDrawerDiv
@@ -32,13 +29,13 @@
   %div.clearfix#floatingbar{:style=>"display:none"}
     %ul 
       %li
-        %button.unpressed.squareButton.button#toolbar_bold{:style=>"font-style:bold;"}
+        %button.unpressed.squareButton.button#toolbar_bold{:style=>"font-weight:900;"}
           B
       %li
-        %button.unpressed.squareButton.button#toolbar_italic{:style=>"font-style:italic;"}
+        %button.unpressed.squareButton.button#toolbar_italic{:style=>"font-style:italic; font-weight:500;"}
           I
       %li
-        %button.unpressed.button#toolbar_alignment
+        %button.unpressed.button#toolbar_alignment{:style=>"font-weight:500;"}
           Alignment
     %div{:style=>"clear:both"}
   .page
