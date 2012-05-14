@@ -42,21 +42,44 @@ var getStyles = function(){
 	return styles;
 }
 
-var getStylesAt = function(node, index){
+var getNodeAt = function(node, index){
   var range = document.createRange();
   var nodeIndex = 0;
-  
-  var insert = document.createElement('bladasdfsdfnk');
-  range.insertNode(insert);
+  var info = [node, 0, index, 0];
+  var newInfo = treeRecurse(node, info);
+  if(newInfo[0] == node){ //Nothing happened.
+    
+  }
+  else{
+    newInfo = [newInfo[0], newInfo[3]];
+    return newInfo;
+  }
 }
 
-var treeRecurse = function(node, curOffset, maxOffset){
-  var info = [node, curOffset, maxOffset];
+var treeRecurse = function(node, info){
+  curOffset = info[1];
+  maxOffset = info[2];
   if (curOffset >= maxOffset){
     return info;
   }
-  if (node.childNodes.length == 0){
-    
+  if(node.nodeType == 3){
+    if(curOffset + node.length > maxOffset){
+      info[3] = maxOffset - curOffset;
+      info[0] = node;
+    }
+    info[1] += node.length;
+    return info;
+  }
+  else{
+    var newInfo = info;
+    for(var i = 0; i < node.childNodes.length; i++){
+      console.log(newInfo);
+      newInfo = treeRecurse(node.childNodes[i], newInfo);
+      if (newInfo[1]>=newInfo[2]){
+        break;
+      }
+    }
+    return newInfo;
   }
 }
 
@@ -137,12 +160,12 @@ var removeSelectionStyle = function(styles){
     }
   }
   if(styleList.length == 0){
-    styleList.push('blank');
+    styleList.push('span');
   }
-  splitRange(contentEditableNode, 5);
-  //var range = document.createRange();
-	//range.setStartAfter(node);
-  //range.setEndAfter(node);
+  var insertLoc = splitRange(contentEditableNode, 5);
+  var range = document.createRange();
+	range.setStartAfter(insertLoc[0]);
+  range.setEndBefore(insertLoc[1]);
   var innerNode = {};
   for(var i = 0; i<styleList.length; i++){
     var newNode = makeStyleNode(styleList[i]);
@@ -165,7 +188,34 @@ var splitRange = function(node, index){
   var leftRange = document.createRange();
   var rightRange = document.createRange();
   entireRange.selectNodeContents(node);
-  getStylesAt(node, 1);
+  var nodeOffset = getNodeAt(node, 6);
+  var contentNode = nodeOffset[0];
+  entireRange.selectNodeContents(contentNode);
+  leftRange.setStart(contentNode, 0);
+  leftRange.setEnd(contentNode, nodeOffset[1]);
+  rightRange.setStart(contentNode, nodeOffset[1]);
+  rightRange.setEndAfter(contentNode);
+  var leftInner = document.createElement('span');
+  var rightInner = document.createElement('span');
+  $(leftInner).text(leftRange.toString());
+  $(rightInner).text(rightRange.toString());
+  leftRange.selectNodeContents(leftInner);
+  rightRange.selectNodeContents(rightInner);
+  var leftClone;
+  var rightClone;
+  while(!$(contentNode.parentNode).attr('contenteditable')){
+    contentNode = contentNode.parentNode;
+    rightClone = contentNode.cloneNode(false);
+    leftClone = contentNode.cloneNode(false);
+    leftRange.surroundContents(leftClone);
+    rightRange.surroundContents(rightClone);
+  }
+  node.appendChild(leftClone);
+  node.appendChild(rightClone);
+  entireRange.deleteContents();
+  var insertLoc = [leftClone, rightClone];
+  return insertLoc;
+  
 }
 
 var makeStyleNode = function(style){
