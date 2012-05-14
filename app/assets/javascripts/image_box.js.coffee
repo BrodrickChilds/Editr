@@ -48,6 +48,7 @@ unless window.image_box
           containment: @container
           cancel: ".do_not_drag"
           stop: @drag_handler
+          stack: "#page_content div"
 
         @element.resizable
           grid:[@grid_size/2, @grid_size/2]
