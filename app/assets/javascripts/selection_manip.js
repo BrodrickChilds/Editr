@@ -30,6 +30,8 @@ var os_place_cursor = function() {
   range.setStart(el.get(0).childNodes[0], index );
   range.setEnd(el.get(0).childNodes[0], index + 3 );
   range.deleteContents();
+  range.setStart(el.get(0).childNodes[0], index+1 );
+  range.setEnd(el.get(0).childNodes[0], index+1 );
   range.collapse(true);
   sel.removeAllRanges();
   sel.addRange(range); 

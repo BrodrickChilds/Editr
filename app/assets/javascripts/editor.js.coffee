@@ -83,10 +83,11 @@ make_editable = (element, formattable=false) ->
 
       split_wrap()
         
-      window.utils.delay => 
+      thing = => 
         os_place_cursor()
         placing_placeholder = false
 
+      setTimeout thing, 10
 
 make_wrap = (element) ->
   split_wrap()
