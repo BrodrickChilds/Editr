@@ -48,7 +48,7 @@ var getNodeAt = function(node, index){
   var info = [node, 0, index, 0];
   var newInfo = treeRecurse(node, info);
   if(newInfo[0] == node){ //Nothing happened.
-    
+    return [node, 0];
   }
   else{
     newInfo = [newInfo[0], newInfo[3]];
@@ -164,8 +164,8 @@ var removeSelectionStyle = function(styles){
   }
   var insertLoc = splitRange(contentEditableNode, 5);
   var range = document.createRange();
-	range.setStartAfter(insertLoc[0]);
-  range.setEndBefore(insertLoc[1]);
+	range.setStartAfter(insertLoc[0][0]);
+  range.setEndBefore(insertLoc[1][0]);
   var innerNode = {};
   for(var i = 0; i<styleList.length; i++){
     var newNode = makeStyleNode(styleList[i]);
@@ -210,10 +210,15 @@ var splitRange = function(node, index){
     leftRange.surroundContents(leftClone);
     rightRange.surroundContents(rightClone);
   }
-  node.appendChild(leftClone);
-  node.appendChild(rightClone);
-  entireRange.deleteContents();
-  var insertLoc = [leftClone, rightClone];
+  deleteNode = entireRange.startContainer;
+  while(!$(deleteNode.parentNode).attr('contenteditable')){
+    deleteNode = deleteNode.parentNode;
+  }
+  $(deleteNode).empty();
+  $(leftClone).insertAfter($(deleteNode));
+  $(rightClone).insertAfter($(leftClone));
+  $(deleteNode).remove();
+  var insertLoc = [$(leftClone), $(rightClone)];
   return insertLoc;
   
 }
