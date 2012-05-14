@@ -1,6 +1,8 @@
 unless window.text
   window.text = {}
 
+  window.text.wrapping_texts = []
+
   class window.text.WrappingText extends window.sel.Deleteable
     
     constructor: (@element) ->
@@ -23,6 +25,12 @@ unless window.text
       @drag_handle.hide()
 
       super(@element)
+
+      window.text.wrapping_texts.push(this)
+
+    delete: =>
+      super()
+      window.text.wrapping_texts = text for text in window.text.wrapping_texts when text isnt this
 
     select: =>
       super()

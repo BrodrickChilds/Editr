@@ -8,9 +8,6 @@ margin = 5
 get_grid_canvas = -> $("#grid")
 get_borders_canvas = -> $("#borders")
 get_page_content = -> $("#page_content")
-
-add_item = ->
-  boxes.push wrapper
   
 add_header = ->
   new_header = $ "<h1>This is a header</h1>"
@@ -52,21 +49,181 @@ make_editable = (element, formattable=false) ->
   if formattable
     attachEvents(wrapping_text.content)
 
-
-wrapping_elements = []
-boxes = []
-
 make_wrap = (element) ->
-  wrapping_elements.push element
+  split_wrap()
 
-  update_wrap()
+split_wrap = ->
+  width = $("#page_content").width()
+  grid_size = width/num_cols
 
-update_wrap = ->
+  dimensions = []
+  for box in window.image_box.list
+    box=box.element
+    pos = box.position()
+    dimensions.push
+      left: pos.left
+      top: pos.top
+      right: pos.left + box.width()
+      bottom: pos.top + box.height()
+
+  dimensions.sort (a, b) ->
+    a.bottom - b.bottom
+
+  # to be safe, we'll just add 100 pixels so we calculate a little past the bottom
+  if dimensions.length > 0
+    max_y = dimensions[dimensions.length - 1].bottom + 100
+  else
+    max_y = 100
+
+  for text in window.text.wrapping_texts
+    element = text.element
+    
+    line_height = window.utils.get_line_height element
+
+    text_top = element.offset().top - $("#page_content").offset().top
+
+    current_y = text_top
+
+    occupied = []
+    while current_y < max_y
+      new_row = (0 for x in [0...num_cols])
+      occupied.push new_row
+      current_y += line_height
+
+    for dimension in dimensions
+      y_start_index = (dimension.top - text_top)/line_height
+      y_end_index = (dimension.bottom - text_top)/line_height
+      y_start_index = Math.floor(y_start_index)
+      y_end_index = Math.floor(y_end_index)
+      
+      x_start_index = dimension.left/grid_size
+      x_end_index = dimension.right/grid_size
+      x_start_index = Math.floor(x_start_index)
+      x_end_index = Math.floor(x_end_index)
+
+      for row_index in [y_start_index..y_end_index]
+        for col_index in [x_start_index..x_end_index]
+          occupied[row_index][col_index] = 1
+
+    for row in occupied
+      console.log row
+
+    copy = text.content.clone()
+    copy.css
+      position: "absolute"
+      right: 9999
+
+    text.element.append copy
+
+    while copy.text()
+      get_largest_stretch occupied[0]
+
+      results = rectangle_slice(copy, width, line_height)
+      console.log results
+      remaining_text = results[1]
+      copy.text(remaining_text)
+
+get_largest_stretch = (row) ->
+  best = null
+  current = null
+  index = 0
+  for item in row
+    if current and item == 0
+      current[1] += 1
+    else if current and item == 1
+      if best
+        if best[0][1] == current[1]
+          best.push current
+          current = null
+        else if best[0][1] < current[1]
+          best = [current]
+          current = null
+        else
+          current = null
+      else
+        best = [current]
+        current = null
+    else if item == 0
+      current = [index,1]
+    index += 1
+  if current
+    if best
+      if best[0][1] == current[1]
+        best.push current
+        current = null
+      else if best[0][1] < current[1]
+        best = [current]
+        current = null
+      else
+        current = null
+    else
+      best = [current]
+    
+  console.log best
+
+rectangle_slice = (element, width, height) ->
+  get_height = (cutoff) ->
+    window.utils.measure(html_slice(element, cutoff), width)
+
+  binary_search = (low, high) ->
+    avg = Math.floor (low+high)/2
+
+    if low >= high-1
+      return high
+    else if get_height(avg) <= height
+      return binary_search(avg, high)
+    else
+      return binary_search(low, avg)
+
+  cutoff = binary_search(0, element.text().length)
+  if cutoff != element.text().length
+    while element.text().slice(cutoff, cutoff+1) != ' '
+      cutoff -= 1
+
+  return [element.text().slice(0, cutoff), element.text().slice(cutoff)]
+
+html_slice = (element, cutoff) ->
+  copy = element.clone()
+  copy.text element.text().slice(0,cutoff)
+
+  copy.css
+    position: "absolute"
+    right: 9999
+    padding: 0
+
+  element.parent().append copy
+ 
+  return copy
+
+$ ->
+  window.sel.set_deselect_area ".sidebar"
+  $("#add_rectangle").click =>
+    image_tag = $ "<img />"
+    image_tag.attr 'src', 'http://img716.imageshack.us/img716/1621/pokemon1.png'
+    image_tag.attr 'alt', 'happy pokemon'
+    grid_size = $("#page_content").width()/num_cols
+
+    image = new window.image_box.ImageBox(image_tag, $("#page_content"), grid_size)
+
+    image.element.bind "modified", split_wrap
+  $("#add_header").click ->
+    add_header()
+  $("#add_section_title").click ->
+    add_section_title()
+  $("#add_text_section").click ->
+    add_body_text()
+
+###
+  The below method is deprecated, and is currently being replaced with a new wrapping method.
+###
+  
+update_wrap_boxes = ->
   width = $("#page_content").width()
   grid_size = width/num_cols
   
   dimensions = []
-  for box in boxes
+  for box in window.image_box.list
+    box=box.element
     pos = box.position()
     dimensions.push
       left: pos.left
@@ -127,10 +284,11 @@ update_wrap = ->
 
   #draw_borders()
 
-  wrapping_elements.sort (a,b) ->
-    a.offset().top - b.offset().top
+  window.text.wrapping_texts.sort (a,b) ->
+    a.element.offset().top - b.element.offset().top
 
-  for element in wrapping_elements
+  for wrapping_text in window.text.wrapping_texts
+    element = wrapping_text.element
     element.css
       marginLeft: 0
       marginRight: 0
@@ -153,23 +311,3 @@ update_wrap = ->
     element.css
       marginLeft: left_max
       marginRight: width - right_max
-
-$ ->
-  window.sel.set_deselect_area ".sidebar"
-  $("#add_rectangle").click ->
-    image_tag = $ "<img />"
-    image_tag.attr 'src', 'http://img716.imageshack.us/img716/1621/pokemon1.png'
-    image_tag.attr 'alt', 'happy pokemon'
-    grid_size = $("#page_content").width()/num_cols
-
-    image = new window.image_box.ImageBox(image_tag, $("#page_content"), grid_size)
-
-    boxes.push image.element
-
-    image.element.bind "modified", update_wrap
-  $("#add_header").click ->
-    add_header()
-  $("#add_section_title").click ->
-    add_section_title()
-  $("#add_text_section").click ->
-    add_body_text()

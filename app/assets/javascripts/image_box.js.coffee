@@ -4,10 +4,14 @@
 unless window.image_box
   window.image_box = {}
 
+  window.image_box.list = []
+
   class window.image_box.ImageBox extends window.sel.Deleteable
     
     constructor: (@image_tag, @container, @grid_size) ->
-      
+     
+      window.image_box.list.push(this)
+
       @element = $ "<div></div>"
       @element.addClass "image_box"
       @element.css
@@ -73,3 +77,8 @@ unless window.image_box
         else
           @image_tag.width(@element.width())
           @image_tag.height(@image_tag.width()/@aspectRatio)
+
+    delete: =>
+      window.image_box.list = (box for box in window.image_box.list when box isnt this)
+      @element.trigger "modified"
+      super()
