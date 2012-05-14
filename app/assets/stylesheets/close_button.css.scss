@@ -3,8 +3,8 @@
     -moz-border-radius: 5px;
     background: #900;
     position: absolute;
-    top: -5px;
-    right: -5px;
+    top: 0;
+    right: 0;
     color: white;
     z-index: 100;
     padding: 3px 5px;
@@ -12,4 +12,7 @@
     font-weight: bold;
     font-family: sans-serif;
     cursor: pointer;
+
+    margin-top: -5px;
+    margin-right: -5px;
 }

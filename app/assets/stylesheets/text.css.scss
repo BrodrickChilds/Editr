@@ -10,20 +10,6 @@
 
   position: relative;
 
-  .wrapping_text {
-    border: 1px solid rgba(0,0,0,0);
-   
-    &.mouseover {
-      border: 1px solid #ccc;
-    }
-
-    &.selected {
-      border: 1px dashed #ccc;
-    }
-
-
-  }
-
   [contenteditable] {
     outline: none;
   }
@@ -31,7 +17,6 @@
   h1 {
     margin: 15px 0;
     font-size: 2em;
-    padding: 5px;
     z-index: 10;
     font-weight: bold;
     position: relative;
@@ -40,7 +25,6 @@
   h2 {
     margin: 12px 0;
     font-size: 1.2em;
-    padding: 5px;
     z-index: 10;
     font-weight: bold;
     position: relative;
@@ -48,7 +32,6 @@
 
   .body_text {
     margin: 8px 0;
-    padding: 5px;
     z-index: 10;
     position: relative;
   }
@@ -81,5 +64,6 @@
   font-size: 10px;
   font-weight: bold;
   font-family: sans-serif;
-  cursor: ns-resize; 
+  cursor: ns-resize;
+  height: 10px;
 }
