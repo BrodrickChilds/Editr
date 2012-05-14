@@ -153,10 +153,7 @@ update_wrap = ->
     element.css
       marginLeft: left_max
       marginRight: width - right_max
-
-$ ->
-  window.sel.set_deselect_area ".sidebar"
-  $("#add_rectangle").click ->
+insert_image = (image_url) ->
     image_tag = $ "<img />"
     image_tag.attr 'src', 'http://img716.imageshack.us/img716/1621/pokemon1.png'
     image_tag.attr 'alt', 'happy pokemon'
@@ -167,6 +164,9 @@ $ ->
     boxes.push image.element
 
     image.element.bind "modified", update_wrap
+$ ->
+  window.sel.set_deselect_area ".sidebar"
+  $("#add_rectangle").click insert_image
   $("#add_header").click ->
     add_header()
   $("#add_section_title").click ->

@@ -209,7 +209,7 @@ var splitRange = function(node, index){
   rightRange.selectNodeContents(rightInner);
   var leftClone;
   var rightClone;
-  while(!$(contentNode).attr('contenteditable') && !$(contentNode.parentNode).attr('contenteditable')){
+  while(contentNode != node && contentNode.parentNode != node){
     contentNode = contentNode.parentNode;
     rightClone = contentNode.cloneNode(false);
     leftClone = contentNode.cloneNode(false);
