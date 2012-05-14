@@ -103,25 +103,47 @@ split_wrap = ->
 
       for row_index in [y_start_index..y_end_index]
         for col_index in [x_start_index..x_end_index]
-          occupied[row_index][col_index] = 1
-
-    for row in occupied
-      console.log row
+          if occupied[row_index]
+            occupied[row_index][col_index] = 1
 
     copy = text.content.clone()
     copy.css
       position: "absolute"
       right: 9999
 
+    text.content.html ""
+
     text.element.append copy
 
-    while copy.text()
-      get_largest_stretch occupied[0]
+    index = 0
 
-      results = rectangle_slice(copy, width, line_height)
-      console.log results
-      remaining_text = results[1]
-      copy.text(remaining_text)
+    skipped = 0
+
+    while copy.text()
+      if occupied[index]
+        stretches = get_largest_stretch occupied[index]
+      else
+        stretches = [[0, num_cols]]
+     
+      if stretches and stretches[0][1] > 6
+        results = rectangle_slice(copy, (stretches[0][1]-1)*grid_size, line_height)
+        remaining_text = results[1]
+        copy.text(remaining_text)
+
+        new_section = $ "<div></div>"
+        new_section.css
+          marginLeft: stretches[0][0]*grid_size
+          width: stretches[0][1]*grid_size
+          marginTop: skipped*line_height
+        new_section.text results[0]
+
+        text.content.append new_section
+
+        skipped = 0
+      else
+        skipped += 1
+
+      index += 1
 
 get_largest_stretch = (row) ->
   best = null
@@ -159,7 +181,7 @@ get_largest_stretch = (row) ->
     else
       best = [current]
     
-  console.log best
+  return best
 
 rectangle_slice = (element, width, height) ->
   get_height = (cutoff) ->
@@ -298,7 +320,6 @@ update_wrap_boxes = ->
 
     left_max = Math.max.apply Math, (left_constraint_grid[top_grid_pos..bottom_grid_pos])
     right_max = Math.min.apply Math, (right_constraint_grid[top_grid_pos..bottom_grid_pos])
-    console.log left_max
 
     margin = 10
     
