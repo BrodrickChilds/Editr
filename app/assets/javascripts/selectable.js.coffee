@@ -82,4 +82,5 @@ unless window.sel
       @delete_button.hide()
 
     delete: =>
+      @_deselect()
       @element.remove()
