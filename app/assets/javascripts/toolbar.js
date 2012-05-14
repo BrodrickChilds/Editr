@@ -42,6 +42,24 @@ var getStyles = function(){
 	return styles;
 }
 
+var getStylesAt = function(node, index){
+  var range = document.createRange();
+  var nodeIndex = 0;
+  
+  var insert = document.createElement('bladasdfsdfnk');
+  range.insertNode(insert);
+}
+
+var treeRecurse = function(node, curOffset, maxOffset){
+  var info = [node, curOffset, maxOffset];
+  if (curOffset >= maxOffset){
+    return info;
+  }
+  if (node.childNodes.length == 0){
+    
+  }
+}
+
 var insertStyle = function(element){
 	if (window.getSelection) {  // all browsers, except IE before version 9
 		var selection = window.getSelection ();
@@ -83,32 +101,112 @@ var switchBorder = function(e){
 	}
 }
 
-var changeSelectionStyle = function(html, node, command){
+var addSelectionStyle = function(style){
+  var node = {};
+  if(style == "bold"){
+    node = document.createElement('b');
+  }
+  else if(style == "italic"){
+    node = document.createElement('i');
+  }
   var selected = getSelected();
   if(selected == ""){
     insertStyle(node);
     $(node).append("$cursorhere$");
     place_cursor(node);
-    switchBorder($(html));
   } else {
-    document.execCommand(command,false,null);
-    switchBorder($(html));
+    document.execCommand(style,false,null);
   }
   $(window.getSelection().anchorNode).parents("[contenteditable='true']").focus();
-  event.stopPropagation();
+  return node;
+}
+
+var removeSelectionStyle = function(styles){
+  var node = window.getSelection().anchorNode.parentNode;
+  var range = window.getSelection().getRangeAt(0);
+  if(!$(window.getSelection().anchorNode).attr('contenteditable')){
+		while(!$(node.parentNode).attr('contenteditable')){
+      node = node.parentNode;
+    }
+  }
+  var contentEditableNode = node.parentNode;
+  var styleList = [];
+  for (style in styles){
+    if(styles[style]){
+      styleList.push(style);
+    }
+  }
+  if(styleList.length == 0){
+    styleList.push('blank');
+  }
+  splitRange(contentEditableNode, 5);
+  //var range = document.createRange();
+	//range.setStartAfter(node);
+  //range.setEndAfter(node);
+  var innerNode = {};
+  for(var i = 0; i<styleList.length; i++){
+    var newNode = makeStyleNode(styleList[i]);
+    if(i == 0){
+      innerNode = newNode;
+      $(newNode).append("$cursorhere$");
+      range.insertNode(newNode);  
+      range.setEndAfter(newNode);
+    }
+    else{
+      range.surroundContents(newNode);
+    }
+  }
+  place_cursor(innerNode);
+  event_on = true;
+}
+
+var splitRange = function(node, index){
+  var entireRange = document.createRange();
+  var leftRange = document.createRange();
+  var rightRange = document.createRange();
+  entireRange.selectNodeContents(node);
+  getStylesAt(node, 1);
+}
+
+var makeStyleNode = function(style){
+  var node = {};
+  if(style == "bold"){
+    node = document.createElement('b');
+  }
+  else if(style == "italic"){
+    node = document.createElement('i');
+  }
+  else if(style == "blank"){
+    node = document.createElement('blank');
+  }
+  return node;
 }
 
 $( function(){
 	
 	$("#toolbar_bold").click(function(event){
 		var selected = getSelected();
-    var boldNode = document.createElement('b');
-    changeSelectionStyle($("#toolbar_bold"), boldNode, 'bold');
+    var curStyles = getStyles();
+    if(selected == "" && curStyles.bold){
+      curStyles.bold = false;
+      removeSelectionStyle(curStyles);
+    }
+    else{
+      addSelectionStyle('bold');
+    }
+    switchBorder($("#toolbar_bold"));
 	});
 	$("#toolbar_italic").click(function(event){
 		var selected = getSelected();
-    var italicNode = document.createElement('i');
-		changeSelectionStyle($("#toolbar_italic"), italicNode, 'italic');
+    var curStyles = getStyles();
+    if(selected == "" && curStyles.italic){
+      curStyles.italic = false;
+      removeSelectionStyle(curStyles);
+    }
+    else{
+      addSelectionStyle('italic');
+    }
+    switchBorder($("#toolbar_italic"));
 	});
 	$("#toolbar_alignment").click(function(event){
 		/*var selected = getSelected();
