@@ -452,8 +452,8 @@ update_wrap_boxes = ->
       marginRight: width - right_max
 insert_image = (image_url) ->
     image_tag = $ "<img />"
-    image_tag.attr 'src', 'http://img716.imageshack.us/img716/1621/pokemon1.png'
-    image_tag.attr 'alt', 'happy pokemon'
+    image_tag.attr 'src', image_url
+    image_tag.attr 'alt', 'inserted image!'
     grid_size = $("#page_content").width()/num_cols
 
     image = new window.image_box.ImageBox(image_tag, $("#page_content"), grid_size)
