@@ -1,6 +1,6 @@
 %div.sidebar
   %div
-    %img{:src=>"/editr_logo.png"}
+    =image_tag "editr_logo.png"
   %div
     %button.postAction.publish#publish PUBLISH
   %div
@@ -11,15 +11,23 @@
     %button.undoRedo#redo REDO
   %div.addItemDiv
     %button.add#add_rectangle + New Image
+  %div.drawerDiv#imageDrawerDiv
+    %div.drawerContent#imageDrawerContent
   %div
     %button.add#add_header + New Header
   %div
     %button.add#add_section_title + New Section Title
   %div
     %button.add#add_text_section + New Text Section
-  %div
-    %button.add#add_more + More...
 
+%div.dialog#imageUploadDialog
+  %div.dialogForm
+    %form
+      %fieldset
+        %label.formLabel#URLlabel URL
+        %input.textInput#URLinput
+    %div.warn#imageURLWarn Must be a valid image URL.
+        
 %div.main_view
   %div.clearfix#floatingbar{:style=>"display:none"}
     %ul 
